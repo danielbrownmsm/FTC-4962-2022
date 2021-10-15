@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode.handlers;
 
 import org.firstinspires.ftc.teamcode.control.*;
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.teamcode.Constants;
 
 import org.opencv.core.Mat;
@@ -11,9 +13,28 @@ import org.openftc.easyopencv.OpenCvPipeline;
 
 
 public class VisionHandler extends Publisher {
+   private Telemetry telemetry;
+   //private OpenCvCamera camera;
+   
+   public VisionHandler(Telemetry telemetry, HardwareMap map) {
+      //TODO
+   }
+   
+   public String getMessage() {
+      return "";
+   }
+   
+   public void triggerPublish() {
+      publish(getMessage(), Subscriber.MsgType.VISION);
+   }
+   
+   
+   
    private class VisionPipeline extends OpenCvPipeline {
       //declare data we want to pass on here
       private double xOffset = 0;
+      private double yOffset = 0;
+      private int numObjects = 0; // ???
       //TODO
       
       @Override
@@ -33,15 +54,4 @@ public class VisionHandler extends Publisher {
       }
    }
    
-   public VisionHandler() {
-      //TODO figure this out cause like idk
-   }
-   
-   public String getMessage() {
-      return "";
-   }
-   
-   public void triggerPublish() {
-      publish(getMessage(), Subscriber.MsgType.VISION);
-   }
 }

@@ -15,4 +15,8 @@ public class ControlHandler extends Publisher implements Subscriber {
    public void recieve(String data, Subscriber.MsgType msgType) {
       this.data = data;
    }
+   
+   public void notifyRockettes() {
+      
+   }
 }

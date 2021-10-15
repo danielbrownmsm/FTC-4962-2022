@@ -6,4 +6,5 @@ public interface Subscriber {
       CONTROL, HARDWARE, VISION, STATE, AUTO, PATH, JOYSTICK, OTHER
    }
    public void recieve(String data, MsgType msgType);
+   public void notifyRockettes();
 }
