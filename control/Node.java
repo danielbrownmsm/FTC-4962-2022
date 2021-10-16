@@ -1,26 +1,24 @@
 package org.firstinspires.ftc.teamcode.control;
 
 import java.util.ArrayList;
-import java.util.List;
 
 
 public class Node {
-    private ArrayList<Subscriber> subscribers = new ArrayList<>();
+    protected ArrayList<String> topics = new ArrayList<>();
     
     public Node() {
     }
     
-    public void addCallback(Subscriber subscriber) {
-        subscribers.add(subscriber);
+    public void give(String topic, String message) {
+        
     }
     
-    public void publish(String data, Subscriber.MsgType msgType) {
-        for (Subscriber subscriber : subscribers) {
-            subscriber.recieve(data, msgType);
-        }
+    public ArrayList<String> topics() {
+        return topics;
     }
     
-    public void recieve(String data, Subscriber.MsgType msgType) {
+    // OVERRIDE THIS!
+    public void spin() {
         
     }
 }

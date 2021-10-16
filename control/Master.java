@@ -1,35 +1,34 @@
 package org.firstinspires.ftc.teamcode.control;
 
+import java.util.ArrayList;
 import java.util.TreeMap;
-import java.util.HashMap;
-import java.util.List;
-//import org.firstinspires.ftc.teamcode
+
+import org.firstinspires.ftc.teamcode.control.Node;
 
 public class Master {
-   private TreeMap<String, String> topicDataMap = new TreeMap<>();
-   private HashMap<String, List<Subscriber>> topicSubsMap = new HashMap<>();
+   private ArrayList<Node> nodes = new ArrayList<>(); // a list of each node
+   private TreeMap<String, String> topics = new TreeMap<>();
    private Master instance;
    
-   /**
-    * Master map:
-    * topic name => (subscriber, subscriber, ...), data
-    */
    
    public Master() {
       
    }
    
-   public void publish(String topic, String data) {
-      topicDataMap.put(topic, data);
-      for (Subscriber sub : topicSubsMap.get(topic)) {
-         sub.notify();
+   public void push(String topic, String message) {
+      topics.put(topic, message);
+      for (Node node : nodes) {
+         if (node.topics().contains(topic)) {
+            node.give(topic, message);
+         }
       }
    }
    
-   public String getData(String topic) {
-      return topicDataMap.get(topic);
+   // calls each node's spin()
+   // call this each loop iteration in op-modes
+   public void execute() {
+      for (Node node : nodes) {
+         node.spin();
+      }
    }
-   
-   // publisher calls Master.publish(topicName, data, dataType?)
-   // 
 }
