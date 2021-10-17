@@ -9,7 +9,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import org.firstinspires.ftc.teamcode.PIDController;
+import org.firstinspires.ftc.teamcode.control.PIDController;
 
 /**
  * A class to represent the functionality of the drivetraion of the robot

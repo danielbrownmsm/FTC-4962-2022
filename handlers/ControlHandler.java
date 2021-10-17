@@ -7,6 +7,8 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 public class ControlHandler extends org.firstinspires.ftc.teamcode.control.Node {
    private String data;
    private Telemetry telemetry;
+   private long lastTime;
+   private RobotState state;
    
    public ControlHandler(Telemetry telemetry) {
       this.telemetry = telemetry;
@@ -14,8 +16,7 @@ public class ControlHandler extends org.firstinspires.ftc.teamcode.control.Node 
    }
    
    public void give(String topic, String message) {
-      RobotState state = RobotState.extract(message);
-      
+      state = RobotState.extract(message);
    }
    
    // essentially main loop of the node
