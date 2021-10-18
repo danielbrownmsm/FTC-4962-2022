@@ -2,10 +2,13 @@ package org.firstinspires.ftc.teamcode.teleops;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import org.firstinspires.ftc.teamcode.subsystems.Drivetrain;
+import org.firstinspires.ftc.teamcode.subsystems.Arm;
+
 
 @TeleOp(name="Robot Characterization")
 public class RobotCharacterizationTeleOp extends OpMode {
-   private Drivetrain drivetrain = new Drivetrain(telemetry, hardwaremap);
+   private Drivetrain drivetrain = new Drivetrain(telemetry, hardwareMap);
    private long startTime;
    private long currTime;
    private final long minTime = 100; //???
@@ -29,7 +32,7 @@ public class RobotCharacterizationTeleOp extends OpMode {
    
    @Override
    public void init() {
-      drivetrain.init();
+      //drivetrain.init();
    }
    
    @Override
@@ -38,7 +41,7 @@ public class RobotCharacterizationTeleOp extends OpMode {
    
    @Override
    public void loop() {
-      drivetrain.driveRaw(voltage);
+      //drivetrain.driveTeleOp(voltage, voltage); // not actual voltage AGH this SUCKS
    }
    
    @Override

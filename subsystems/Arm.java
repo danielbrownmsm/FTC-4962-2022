@@ -8,7 +8,8 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.hardware.CRServoImplEx;
 
-import org.firstinspires.ftc.teamcode.PIDController;
+import org.firstinspires.ftc.teamcode.control.PIDController;
+import org.firstinspires.ftc.teamcode.commandframework.Subsystem;
 
 /**
  * A class to represent the functionality of the manipulator on the robot
@@ -22,7 +23,7 @@ import org.firstinspires.ftc.teamcode.PIDController;
  * This class includes a periodic() function, please call this function every
  * loop iteration to make the robot run optimally
  */
-public class Arm {
+public class Arm extends Subsystem {
    //TODO telemetry
    private DcMotorImplEx turntable;
    private DcMotorImplEx arm;
@@ -105,13 +106,13 @@ public class Arm {
       intakePower = power;
    }
    
-   //@Override
    /**
     * The subsystem's periodic function.
     * This makes all the PIDs go to their setpoints, and keeps
     * track of sensors so we don't run into hard limits. In the
     * future maybe also does other stuff?
     */
+    @Override
    public void periodic() {
       turntable.setPower(turntable_PID.calculate(turntable.getCurrentPosition()));
       arm.setPower(arm_PID.calculate(arm.getCurrentPosition()));
