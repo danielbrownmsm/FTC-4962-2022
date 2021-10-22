@@ -16,4 +16,9 @@ public class SetArmCommand extends Command {
    public void execute() {
       arm.setArm(angle);
    }
+   
+   @Override
+   public boolean isFinished() {
+      return arm.armAtSetpoint();
+   }
 }

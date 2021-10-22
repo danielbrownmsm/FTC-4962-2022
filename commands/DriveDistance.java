@@ -4,22 +4,27 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 import org.firstinspires.ftc.teamcode.commandframework.Command;
 import org.firstinspires.ftc.teamcode.subsystems.Drivetrain;
 
-public class DriveCommand extends Command {
+public class DriveDistance extends Command {
    private final Drivetrain drivetrain;
-   private Gamepad gamepad;
+   private double distance;
    
-   public DriveCommand(Drivetrain drivetrain, Gamepad gamepad) {
+   public DriveDistance(Drivetrain drivetrain, double distance) {
       this.drivetrain = drivetrain;
-      this.gamepad = gamepad;
+      this.distance = distance;
+   }
+   
+   @Override
+   public void init() {
+      drivetrain.prepareDistance();
    }
    
    @Override
    public void execute() {
-      drivetrain.driveTeleOp(gamepad.left_stick_y, gamepad.right_stick_y);
+      drivetrain.driveDistance(distance);
    }
    
    @Override
    public boolean isFinished() {
-      return false; // never ends
+      return drivetrain.atDistanceSetpoint() /*|| isTimedOut()*/;
    }
 }

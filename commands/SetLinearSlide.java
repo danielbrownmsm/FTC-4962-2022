@@ -16,4 +16,9 @@ public class SetLinearSlide extends Command {
    public void execute() {
       arm.setLinearSlide(distance);
    }
+   
+   @Override
+   public boolean isFinished() {
+      return arm.linearSlideAtSetpoint();
+   }
 }

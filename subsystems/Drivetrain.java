@@ -11,6 +11,7 @@ import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.control.PIDController;
+import org.firstinspires.ftc.teamcode.Constants;
 import org.firstinspires.ftc.teamcode.commandframework.Subsystem;
 
 
@@ -38,6 +39,7 @@ public class Drivetrain extends Subsystem {
    
    private PIDController distancePID;
    private PIDController headingPID;
+   private PIDController turnPID;
    
    //Pure-pursuit? idk what to do man
    
@@ -60,6 +62,15 @@ public class Drivetrain extends Subsystem {
 
       imu1 = map.get(BNO055IMU.class, "imu1");
       imu2 = map.get(BNO055IMU.class, "imu2");
+      
+      distancePID = new PIDController(Constants.distancePID);
+      headingPID = new PIDController(Constants.headingPID);
+      turnPID = new PIDController(Constants.turnPID);
+   }
+   
+   // TODO documentation
+   public void init() {
+      //TODO make this like zero all the sensors and calibrate and stuff
    }
    
    /**
@@ -72,6 +83,53 @@ public class Drivetrain extends Subsystem {
       leftBack.setPower(leftPower);
       rightFront.setPower(rightPower);
       rightBack.setPower(rightPower);
+   }
+   
+   //TODO documentation
+   //TODO make actually like work good
+   public void arcadeDrive(double power, double turn) {
+      leftFront.setPower(power - turn);
+      leftBack.setPower(power - turn);
+      rightFront.setPower(power + turn);
+      rightBack.setPower(power + turn);
+   }
+   
+   // ???
+   public void prepareTurn() {
+      resetGyros();
+      turnPID.reset();
+   }
+   
+   public void prepareDistance() {
+      resetEncoders();
+      resetGyros();
+      distancePID.reset();
+      headingPID.reset();
+      headingPID.setSetpoint(getHeading());
+   }
+   
+   public void turnToHeading(double angle) {
+      turnPID.setSetpoint(angle);
+      arcadeDrive(0, turnPID.calculate(getHeading(), System.nanoTime()));
+   }
+   
+   //TODO make this use inches and stuff
+   public void driveDistance(double distance) {
+      distancePID.setSetpoint(distance);
+      arcadeDrive(distancePID.calculate(getAverageDistance(), System.nanoTime()), 
+                  headingPID.calculate(getHeading(), System.nanoTime()));
+   }
+   
+   public boolean atHeadingSetpoint() {
+      return headingPID.atSetpoint();
+   }
+   
+   public boolean atDistanceSetpoint() {
+      return distancePID.atSetpoint();
+   }
+   
+   public boolean atTurnSetpoint() {
+      return turnPID.atSetpoint();
    }
    
    /**

@@ -17,4 +17,9 @@ public class IntakeCommand extends Command {
    public void execute() {
       arm.setIntake(power);
    }
+   
+   @Override
+   public boolean isFinished() {
+      return true;
+   }
 }

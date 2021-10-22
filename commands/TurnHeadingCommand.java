@@ -4,22 +4,27 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 import org.firstinspires.ftc.teamcode.commandframework.Command;
 import org.firstinspires.ftc.teamcode.subsystems.Drivetrain;
 
-public class DriveCommand extends Command {
+public class TurnHeadingCommand extends Command {
    private final Drivetrain drivetrain;
-   private Gamepad gamepad;
+   private double heading;
    
-   public DriveCommand(Drivetrain drivetrain, Gamepad gamepad) {
+   public TurnHeadingCommand(Drivetrain drivetrain, double heading) {
       this.drivetrain = drivetrain;
-      this.gamepad = gamepad;
+      this.heading = heading;
+   }
+   
+   @Override
+   public void init() {
+      drivetrain.prepareTurn();
    }
    
    @Override
    public void execute() {
-      drivetrain.driveTeleOp(gamepad.left_stick_y, gamepad.right_stick_y);
+      drivetrain.turnToHeading(heading);
    }
    
    @Override
    public boolean isFinished() {
-      return false; // never ends
+      return drivetrain.atHeadingSetpoint() /*|| isTimedOut()*/;
    }
 }

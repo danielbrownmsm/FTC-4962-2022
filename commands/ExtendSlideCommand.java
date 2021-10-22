@@ -3,22 +3,22 @@ package org.firstinspires.ftc.teamcode.commands;
 import org.firstinspires.ftc.teamcode.subsystems.Arm;
 import org.firstinspires.ftc.teamcode.commandframework.Command;
 
-public class SetTurntableCommand extends Command {
+public class ExtendSlideCommand extends Command {
    private final Arm arm;
-   private double angle;
+   private double amount;
    
-   public SetTurntableCommand(Arm arm, double angle) {
+   public ExtendSlideCommand(Arm arm, double amount) {
       this.arm = arm;
-      this.angle = angle;
+      this.amount = amount;
    }
    
    @Override
    public void execute() {
-      arm.rotateTurntable(angle);
+      arm.incrementLinearSlide(amount);
    }
    
    @Override
    public boolean isFinished() {
-      return arm.turntableAtSetpoint();
+      return true; // ???
    }
 }

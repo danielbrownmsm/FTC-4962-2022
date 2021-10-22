@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 
 import org.firstinspires.ftc.teamcode.commandframework.Subsystem;
@@ -18,8 +19,11 @@ import org.openftc.easyopencv.OpenCvPipeline;
 
 public class Vision extends Subsystem {
         private OpenCvCamera camera;
+        private Telemetry telemetry;
         
-        public Vision(HardwareMap hardwareMap) {
+        public Vision(Telemetry telemetry, HardwareMap hardwareMap) {
+                this.telemetry = telemetry;
+                
                 WebcamName webcamName = hardwareMap.get(WebcamName.class, "Webcam1");
                 OpenCvCamera camera = OpenCvCameraFactory.getInstance().createWebcam(webcamName);
         }

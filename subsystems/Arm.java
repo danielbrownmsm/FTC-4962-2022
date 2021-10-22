@@ -68,6 +68,12 @@ public class Arm extends Subsystem {
       linearSlide_PID = new PIDController(Constants.linearSlidePID);
    }
    
+   public void init() {
+      //TODO documentation
+      //TODO make this actually do something and zero sensors and move
+      // everything into place and stuff
+   }
+   
    /**
     * Sets the angle for the turntable to PID to, in degrees.
     * 0 is facing towards the front of the robot, going to -180 in one 
@@ -83,6 +89,10 @@ public class Arm extends Subsystem {
       turntable_PID.setSetpoint(amount + turntable_PID.getSetpoint());
    }
    
+   public boolean armAtSetpoint() {
+      return arm_PID.atSetpoint();
+   }
+   
    /**
     * Sets the angle for the arm to PID to, in degrees
     * @param angle the angle for the arm to PID to, in degrees
@@ -90,6 +100,14 @@ public class Arm extends Subsystem {
    public void setArm(double angle) {
       //TODO some kind of clamping?
       arm_PID.setSetpoint(angle);
+   }
+   
+   public void incrementArm(double amount) {
+      arm_PID.setSetpoint(amount + arm_PID.getSetpoint());
+   }
+   
+   public boolean turntableAtSetpoint() {
+      return turntable_PID.atSetpoint();
    }
    
    /**
@@ -100,6 +118,14 @@ public class Arm extends Subsystem {
       //TODO some kind of clamping?
       //TODO can we even have/do we even need this kind of functionality? Maybe just make it a boolean thing?
       linearSlide_PID.setSetpoint(dist);
+   }
+   
+   public void incrementLinearSlide(double amount) {
+      linearSlide_PID.setSetpoint(amount + linearSlide_PID.getSetpoint());
+   }
+    
+   public boolean linearSlideAtSetpoint() {
+      return linearSlide_PID.atSetpoint();
    }
    
    /**
