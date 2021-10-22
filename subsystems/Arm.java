@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
 import com.qualcomm.robotcore.hardware.DcMotorImplEx;
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import com.qualcomm.robotcore.hardware.CRServoImpl;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -9,6 +10,7 @@ import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.hardware.CRServoImplEx;
 
 import org.firstinspires.ftc.teamcode.control.PIDController;
+import org.firstinspires.ftc.teamcode.Constants;
 import org.firstinspires.ftc.teamcode.commandframework.Subsystem;
 
 /**
@@ -50,7 +52,7 @@ public class Arm extends Subsystem {
     * @param map the hardware map instace provided in the opmode
     */
     //TODO maybe some kind of simulation/testing support?
-   public Arm(HardwareMap map) {
+   public Arm(Telemetry telemetry, HardwareMap map) {
       turntable = map.get(DcMotorImplEx.class, "turntable");
       arm = map.get(DcMotorImplEx.class, "arm");
       linearSlide = map.get(DcMotorImplEx.class, "linearSlide");
@@ -61,9 +63,9 @@ public class Arm extends Subsystem {
       linearSlideSensor = map.get(TouchSensor.class, "linearSlideSensor");
       intakeSensor = map.get(TouchSensor.class, "intakeSensor");
       
-      turntable_PID = new PIDController();
-      arm_PID = new PIDController();
-      linearSlide_PID = new PIDController();
+      turntable_PID = new PIDController(Constants.tablePID);
+      arm_PID = new PIDController(Constants.armPID);
+      linearSlide_PID = new PIDController(Constants.linearSlidePID);
    }
    
    /**
@@ -75,6 +77,10 @@ public class Arm extends Subsystem {
    public void rotateTurntable(double angle) {
       //TODO continuous rotation? What about wires? Some kind of clamping?
       turntable_PID.setSetpoint(angle);
+   }
+   
+   public void incrementTurntable(double amount) {
+      turntable_PID.setSetpoint(amount + turntable_PID.getSetpoint());
    }
    
    /**
@@ -114,9 +120,9 @@ public class Arm extends Subsystem {
     */
     @Override
    public void periodic() {
-      turntable.setPower(turntable_PID.calculate(turntable.getCurrentPosition()));
-      arm.setPower(arm_PID.calculate(arm.getCurrentPosition()));
-      linearSlide.setPower(linearSlide_PID.calculate(linearSlide.getCurrentPosition()));
+      turntable.setPower(turntable_PID.calculate(turntable.getCurrentPosition(), System.nanoTime()));
+      arm.setPower(arm_PID.calculate(arm.getCurrentPosition(), System.nanoTime()));
+      linearSlide.setPower(linearSlide_PID.calculate(linearSlide.getCurrentPosition(), System.nanoTime()));
       
       //???
       if (!intakeSensor.isPressed()) {
