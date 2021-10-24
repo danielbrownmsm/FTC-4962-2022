@@ -14,7 +14,12 @@ public class RaiseArmCommand extends Command {
    
    @Override
    public void execute() {
-      arm.setArm(angle);
-      //TODO make this actually raise arm and stuff
+      arm.incrementArm(angle);
+   }
+
+   @Override
+   public boolean end() {
+      // so we're not constsantly running this and messing with other subsystems
+      return true;
    }
 }
