@@ -60,6 +60,11 @@ public class PIDController {
         this.setpoint = setpoint;
     }
 
+    //TODO change everything over to this?
+    public double calculate(double measurement) {
+        return calculate(measurement, System.nanoTime());
+    }
+
     public double calculate(double measurement, double setpoint, double time) {
         setSetpoint(setpoint);
         return calculate(measurement, time);
