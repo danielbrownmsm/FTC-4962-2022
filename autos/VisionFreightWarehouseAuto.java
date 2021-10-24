@@ -22,9 +22,30 @@ public class ParkInWarehouseAuto extends LinearOpMode {
       arm = new Arm(telemetry, hardwareMap);
       vision = new Vision(telemetry, hardwareMap);
 
-      // the autonomous command      
+      // the autonomous command
+      /**
+       * use vision to store the correct height placement thingy
+       * drive to the wobble thing
+       * raise the arm to the correct height
+       * extend the linear slide
+       * outake the preloaded cube
+       * ???move linear slide back in???
+       * drive back
+       * turn to the warehouse
+       * drive into the warehouse
+       */
+        //TODO maybe make some of these ParallelCommands so we don't take up too much time in auto
       autoCommand = new SequentialCommand(
-         new DriveDistance(drivetrain, 12) //TODO actually use the right distance
+        new VisionStoreLevel(vision),
+        new DriveDistance(drivetrain, 1), //TODO use correct distance 
+        new VisionRaiseArm(vision, arm),
+        new SetLinearSlide(arm, 6), //TODO use correct distance
+        new IntakeCommand(arm, -1), //TODO this needs to have a timeout or something so it can last a while
+        // or maybe have a WaitCommand() ???
+        new SetLinearSlide(arm, 0), //TODO use correct distance
+        new DriveDistance(drivetrain, -1), //TODO use correct distance
+        new TurnHeadingCommand(drivetrain, 90), //TODO use correct angle
+        new DriveDistance(drivetrain, 12) //TODO actually use the right distance
       );
       
       // initiallize all the subsystems
