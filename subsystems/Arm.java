@@ -69,9 +69,12 @@ public class Arm extends Subsystem {
    }
    
    public void init() {
-      //TODO documentation
-      //TODO make this actually do something and zero sensors and move
-      // everything into place and stuff
+      //DOCUMENT
+      turntable_PID.reset();
+      arm_PID.reset();
+      linearSlide_PID.reset();
+
+      resetEncoders();
    }
    
    /**
@@ -85,10 +88,12 @@ public class Arm extends Subsystem {
       turntable_PID.setSetpoint(angle);
    }
    
+   //DOCUMENT
    public void incrementTurntable(double amount) {
       turntable_PID.setSetpoint(amount + turntable_PID.getSetpoint());
    }
    
+   //DOCUMENT
    public boolean armAtSetpoint() {
       return arm_PID.atSetpoint();
    }
@@ -102,10 +107,12 @@ public class Arm extends Subsystem {
       arm_PID.setSetpoint(angle);
    }
    
+   //DOCUMENT
    public void incrementArm(double amount) {
       arm_PID.setSetpoint(amount + arm_PID.getSetpoint());
    }
    
+   //DOCUMENT
    public boolean turntableAtSetpoint() {
       return turntable_PID.atSetpoint();
    }
@@ -120,10 +127,12 @@ public class Arm extends Subsystem {
       linearSlide_PID.setSetpoint(dist);
    }
    
+   //DOCUMENT
    public void incrementLinearSlide(double amount) {
       linearSlide_PID.setSetpoint(amount + linearSlide_PID.getSetpoint());
    }
     
+   //DOCUMENT
    public boolean linearSlideAtSetpoint() {
       return linearSlide_PID.atSetpoint();
    }

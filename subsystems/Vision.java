@@ -16,29 +16,51 @@ import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvPipeline;
 
+import org.firstinspires.ftc.teamcode.control.PIDController;
+import org.firstinspires.ftc.teamcode.Constants;
 
+/**
+ * The vision-processing subsystem
+ */
 public class Vision extends Subsystem {
         private OpenCvCamera camera;
         private Telemetry telemetry;
+
+        private PIDController vision_PID;
         
+        //DOCUMENT
         public Vision(Telemetry telemetry, HardwareMap hardwareMap) {
                 this.telemetry = telemetry;
                 
                 WebcamName webcamName = hardwareMap.get(WebcamName.class, "Webcam1");
                 OpenCvCamera camera = OpenCvCameraFactory.getInstance().createWebcam(webcamName);
+
+                vision_PID = new PIDController(Constants.visionPID);
         }
         
+        //DOCUMENT
         public void init() {
                 camera.openCameraDevice();
                 camera.startStreaming(752, 416);
                 camera.setPipeline(new RockettesPipeline());
         }
+
+        //DOCUMENT
+        public double getTurnPower() {
+                return vision_PID.calculate(0, System.getNanoTime()); //TODO actually make work
+        }
+
+        //DOCUMENT
+        public boolean isAligned() {
+                return false; //TODO actually make work
+        }
         
         @Override
         public void periodic() {
-                
+                // honestly we don't do much here. 
         }
         
+        //DOCUMENT
         public class RockettesPipeline extends OpenCvPipeline {
                 @Override
                 public Mat processFrame(Mat input) {

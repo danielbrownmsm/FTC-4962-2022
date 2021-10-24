@@ -50,6 +50,7 @@ public class Drivetrain extends Subsystem {
     * Creates a new Drivetrain subsystem
     * 
     * @param map the hardware map instace provided in the opmode
+    * @param telemetry the telemetry instance provided in the opmode
     */
     //TODO maybe some kind of simulation/testing support?
    public Drivetrain(Telemetry telemetry, HardwareMap map) {
@@ -68,8 +69,14 @@ public class Drivetrain extends Subsystem {
       turnPID = new PIDController(Constants.turnPID);
    }
    
-   // TODO documentation
+   // DOCUMENT
    public void init() {
+      resetGyro();
+      resetEncoders();
+      distancePID.reset();
+      headingPID.reset();
+      turnPID.reset();
+      // idk what else
       //TODO make this like zero all the sensors and calibrate and stuff
    }
    
@@ -85,8 +92,8 @@ public class Drivetrain extends Subsystem {
       rightBack.setPower(rightPower);
    }
    
-   //TODO documentation
-   //TODO make actually like work good
+   //DOCUMENT
+   //TODO make actually work
    public void arcadeDrive(double power, double turn) {
       leftFront.setPower(power - turn);
       leftBack.setPower(power - turn);
@@ -100,6 +107,7 @@ public class Drivetrain extends Subsystem {
       turnPID.reset();
    }
    
+   //DOCUMENT
    public void prepareDistance() {
       resetEncoders();
       resetGyros();
@@ -108,6 +116,7 @@ public class Drivetrain extends Subsystem {
       headingPID.setSetpoint(getHeading());
    }
    
+   //DOCUMENT
    public void turnToHeading(double angle) {
       turnPID.setSetpoint(angle);
       arcadeDrive(0, turnPID.calculate(getHeading(), System.nanoTime()));
@@ -120,14 +129,17 @@ public class Drivetrain extends Subsystem {
                   headingPID.calculate(getHeading(), System.nanoTime()));
    }
    
+   //DOCUMENT
    public boolean atHeadingSetpoint() {
       return headingPID.atSetpoint();
    }
    
+   //DOCUMENT
    public boolean atDistanceSetpoint() {
       return distancePID.atSetpoint();
    }
    
+   //DOCUMENT
    public boolean atTurnSetpoint() {
       return turnPID.atSetpoint();
    }
@@ -188,16 +200,13 @@ public class Drivetrain extends Subsystem {
     */
    public void resetGyros() {
       //TODO
-   };
-   
-   /** I don't freaking know*/
-   public void resetPID() {
-      
+      //imu1.reset();
+      //imu2.reset();
+      //???
    };
    
    @Override
    public void periodic() {
-      //IDK???
-      //???
+      //TODO telemetry stuff here
    }
 }
