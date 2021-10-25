@@ -6,7 +6,7 @@ import org.firstinspires.ftc.teamcode.subsystems.Drivetrain;
 import org.firstinspires.ftc.teamcode.subsystems.Arm;
 
 
-@TeleOp(name="Robot Characterization")
+@TeleOp(name="Robot Characterization TeleOp", group="noncomp")
 public class RobotCharacterizationTeleOp extends OpMode {
    private Drivetrain drivetrain = new Drivetrain(telemetry, hardwareMap);
    private long startTime;

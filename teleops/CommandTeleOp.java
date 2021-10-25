@@ -10,7 +10,7 @@ import org.firstinspires.ftc.teamcode.subsystems.*;
 import org.firstinspires.ftc.teamcode.commands.*;
 
 
-@TeleOp(name="command based teleop")
+@TeleOp(name="Competition TeleOp", group="comp")
 public class CommandTeleOp extends OpMode {
    private Drivetrain drivetrain;
    private Arm arm;

@@ -6,7 +6,7 @@ import org.firstinspires.ftc.teamcode.commandframework.CommandScheduler;
 import org.firstinspires.ftc.teamcode.subsystems.Drivetrain;
 import org.firstinspires.ftc.teamcode.commands.*;
 
-@TeleOp(name="basic tank drive")
+@TeleOp(name="Just Tank-drive TeleOp", group="noncomp")
 public class TankDriveTeleOp extends OpMode {
    private Drivetrain drivetrain = new Drivetrain(telemetry, hardwareMap);
    

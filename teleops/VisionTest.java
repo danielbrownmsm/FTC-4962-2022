@@ -9,7 +9,7 @@ import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvWebcam;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
-@TeleOp(name="vision test", group="tests")
+@TeleOp(name="Camera Stream Tele-Op", group="noncomp")
 public class VisionTest extends OpMode {
     /*
      * Code to run ONCE when the driver hits INIT
