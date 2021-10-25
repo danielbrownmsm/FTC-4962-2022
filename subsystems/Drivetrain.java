@@ -150,7 +150,8 @@ public class Drivetrain extends Subsystem {
     */
    public double getHeading() {
       //TODO fuse this and make it more accurate
-      //TODO use the other IMU
+      //TODO use the other IMU as well
+      //TODO make sure this is actually correct and we don't need AxesReference.EXTRINSIC or anything
       //TODO correct for placement of hub on robot and center of rotation and all that
       return imu1.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES).thirdAngle;
    };
@@ -169,7 +170,10 @@ public class Drivetrain extends Subsystem {
     * @return the distance, in inches, of the left side
     */
    public double getLeftDistance() {
-      return (leftFront.getCurrentPosition() + leftBack.getCurrentPosition()) / 2;      
+      return 
+         ((leftFront.getCurrentPosition() + leftBack.getCurrentPosition()) / 2)
+         / Constants.TICKS_PER_REV
+         * Constants.PI * Constants.WHEEL_DIAMETER;      
    };
    
    /**
@@ -177,7 +181,10 @@ public class Drivetrain extends Subsystem {
     * @return the distance, in inches, of the right side
     */
    public double getRightDistance() {
-      return (rightFront.getCurrentPosition() + rightBack.getCurrentPosition()) / 2;      
+      return 
+         ((rightFront.getCurrentPosition() + rightBack.getCurrentPosition()) / 2)
+         / Constants.TICKS_PER_REV
+         * Constants.PI * Constants.WHEEL_DIAMETER;      
    };
    
    /**

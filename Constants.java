@@ -12,8 +12,8 @@ public class Constants {
    public static final Scalar UPPER = new Scalar(200, 255, 255);
    
    // drivetrain constants
-   public static final double TICKS_PER_REV = 0;
-   public static final double WHEEL_DIAMETER = 0;
+   public static final double TICKS_PER_REV = 537.7;
+   public static final double WHEEL_DIAMETER = 3.77953;
    public static final double INCHES_PER_REV = Math.PI * WHEEL_DIAMETER;
    
    public static final PIDCoefficients headingPID = new PIDCoefficients(0, 0, 0);
@@ -25,6 +25,6 @@ public class Constants {
    public static final PIDCoefficients armPID = new PIDCoefficients(0, 0, 0);
    public static final PIDCoefficients tablePID = new PIDCoefficients(0, 0, 0);
    public static final PIDCoefficients linearSlidePID = new PIDCoefficients(0, 0, 0);
-   //prob some other stuff too
-   
+
+   public static final double linearSlideDiameter = 3; // diameter of linear slide spool thingy, in inches
 }

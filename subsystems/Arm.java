@@ -146,7 +146,26 @@ public class Arm extends Subsystem {
       //intake2.setPower(power);
       intakePower = power;
    }
-   
+
+   //DOCUMENT
+   public double getTurntableAngle() {
+      // degrees
+      return turntable.getCurrentPosition() / Constants.TICKS_PER_REV / 360;
+   }
+
+   //DOCUMENT
+   public double getArmAngle() {
+      // degrees
+      return arm.getCurrentPosition() / Constants.TICKS_PER_REV / 360;
+   }
+
+   //DOCUMENT
+   public double getLinearSlideDistance() {
+      // degrees
+      return linearSlide.getCurrentPosition() / Constants.TICKS_PER_REV * Constants.linearSlideDiameter * Constants.PI;
+   }
+
+
    /**
     * The subsystem's periodic function.
     * This makes all the PIDs go to their setpoints, and keeps
@@ -155,9 +174,9 @@ public class Arm extends Subsystem {
     */
     @Override
    public void periodic() {
-      turntable.setPower(turntable_PID.calculate(turntable.getCurrentPosition(), System.nanoTime()));
-      arm.setPower(arm_PID.calculate(arm.getCurrentPosition(), System.nanoTime()));
-      linearSlide.setPower(linearSlide_PID.calculate(linearSlide.getCurrentPosition(), System.nanoTime()));
+      turntable.setPower(turntable_PID.calculate(getTurntableAngle()));
+      arm.setPower(arm_PID.calculate(getArmAngle()));
+      linearSlide.setPower(linearSlide_PID.calculate(getLinearSlideDistance()));
       
       //???
       if (!intakeSensor.isPressed()) {
