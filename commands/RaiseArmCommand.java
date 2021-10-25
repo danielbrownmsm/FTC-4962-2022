@@ -26,8 +26,8 @@ public class RaiseArmCommand extends Command {
    }
 
    @Override
-   public boolean end() {
+   public boolean isFinished() {
       // we're finished when the arm has reached the setpoint
-      return arm.atArmSetpoint();
+      return arm.armAtSetpoint();
    }
 }

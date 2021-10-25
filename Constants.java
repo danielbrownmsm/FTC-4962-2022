@@ -27,4 +27,6 @@ public class Constants {
    public static final PIDCoefficients linearSlidePID = new PIDCoefficients(0, 0, 0);
 
    public static final double linearSlideDiameter = 3; // diameter of linear slide spool thingy, in inches
+   public static final double armHeight[] = {10, 30, 90, 120}; // in degrees, from -1 to 3
+   
 }

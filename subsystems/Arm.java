@@ -162,7 +162,17 @@ public class Arm extends Subsystem {
    //DOCUMENT
    public double getLinearSlideDistance() {
       // degrees
-      return linearSlide.getCurrentPosition() / Constants.TICKS_PER_REV * Constants.linearSlideDiameter * Constants.PI;
+      return linearSlide.getCurrentPosition() / Constants.TICKS_PER_REV * Constants.linearSlideDiameter * Math.PI;
+   }
+   
+   public void resetEncoders() {
+      turntable.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+      arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+      linearSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+      
+      turntable.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+      arm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+      linearSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
    }
 
 

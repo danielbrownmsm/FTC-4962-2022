@@ -1,13 +1,14 @@
 package org.firstinspires.ftc.teamcode.autos;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.firstinspires.ftc.teamcode.commandframework.CommandScheduler;
 import org.firstinspires.ftc.teamcode.commandframework.SequentialCommand;
 import org.firstinspires.ftc.teamcode.subsystems.*;
 import org.firstinspires.ftc.teamcode.commands.*;
 
-
+@Autonomous(name="Park in Warehouse", group="compauto")
 public class ParkInWarehouseAuto extends LinearOpMode {
    private Drivetrain drivetrain;
    private Arm arm;
@@ -24,6 +25,7 @@ public class ParkInWarehouseAuto extends LinearOpMode {
 
       // the autonomous command      
       autoCommand = new SequentialCommand(
+         new SetArmCommand(arm, 20), // raise the arm off the ground a bit so we don't run over it
          new DriveDistance(drivetrain, 12) //TODO actually use the right distance
       );
       
@@ -36,9 +38,6 @@ public class ParkInWarehouseAuto extends LinearOpMode {
       CommandScheduler.getInstance().schedule(autoCommand);
       
       waitForStart();
-
-      //TODO actually make and work and test and stuff
-      arm.setOutOfTheWay(); // raise the arm up a bit so that we don't run over it
 
       // loop until we are finished or we must finish
       while (!autoCommand.isFinished() && !isStopRequested()) {

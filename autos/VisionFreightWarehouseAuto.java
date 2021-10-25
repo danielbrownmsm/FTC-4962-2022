@@ -1,14 +1,15 @@
 package org.firstinspires.ftc.teamcode.autos;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.firstinspires.ftc.teamcode.commandframework.CommandScheduler;
 import org.firstinspires.ftc.teamcode.commandframework.SequentialCommand;
 import org.firstinspires.ftc.teamcode.subsystems.*;
 import org.firstinspires.ftc.teamcode.commands.*;
 
-
-public class ParkInWarehouseAuto extends LinearOpMode {
+@Autonomous(name="Vision Freight Warehouse", group="compauto")
+public class VisionFreightWarehouseAuto extends LinearOpMode {
    private Drivetrain drivetrain;
    private Arm arm;
    private Vision vision;
@@ -38,7 +39,7 @@ public class ParkInWarehouseAuto extends LinearOpMode {
       autoCommand = new SequentialCommand(
         new VisionStoreLevel(vision),
         new DriveDistance(drivetrain, 1), //TODO use correct distance 
-        new VisionRaiseArm(vision, arm),
+        new VisionRaiseArm(arm, vision),
         new SetLinearSlide(arm, 6), //TODO use correct distance
         new IntakeCommand(arm, -1), //TODO this needs to have a timeout or something so it can last a while
         // or maybe have a WaitCommand() ???
@@ -59,7 +60,7 @@ public class ParkInWarehouseAuto extends LinearOpMode {
       waitForStart();
 
       //TODO actually make and work and test and stuff
-      arm.setOutOfTheWay(); // raise the arm up a bit so that we don't run over it
+      //arm.setOutOfTheWay(); // raise the arm up a bit so that we don't run over it
 
       // loop until we are finished or we must finish
       while (!autoCommand.isFinished() && !isStopRequested()) {

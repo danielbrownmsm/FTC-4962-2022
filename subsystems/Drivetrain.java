@@ -71,7 +71,7 @@ public class Drivetrain extends Subsystem {
    
    // DOCUMENT
    public void init() {
-      resetGyro();
+      resetGyros();
       resetEncoders();
       distancePID.reset();
       headingPID.reset();
@@ -173,7 +173,7 @@ public class Drivetrain extends Subsystem {
       return 
          ((leftFront.getCurrentPosition() + leftBack.getCurrentPosition()) / 2)
          / Constants.TICKS_PER_REV
-         * Constants.PI * Constants.WHEEL_DIAMETER;      
+         * Math.PI * Constants.WHEEL_DIAMETER;      
    };
    
    /**
@@ -184,7 +184,7 @@ public class Drivetrain extends Subsystem {
       return 
          ((rightFront.getCurrentPosition() + rightBack.getCurrentPosition()) / 2)
          / Constants.TICKS_PER_REV
-         * Constants.PI * Constants.WHEEL_DIAMETER;      
+         * Math.PI * Constants.WHEEL_DIAMETER;      
    };
    
    /**
@@ -206,7 +206,7 @@ public class Drivetrain extends Subsystem {
     * Resets (zeros) the gyro. Do we even need this? Yeah kinda I guess...
     */
    public void resetGyros() {
-      //TODO
+      //TODO make turning logic and math stuff work
       //imu1.reset();
       //imu2.reset();
       //???

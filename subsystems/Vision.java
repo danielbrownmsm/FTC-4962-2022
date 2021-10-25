@@ -44,15 +44,24 @@ public class Vision extends Subsystem {
         
         //DOCUMENT
         public void init() {
-                camera.openCameraDevice();
-                camera.startStreaming(752, 416);
-                camera.setPipeline(hubLevelPipeline);
+          camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
+            @Override
+            public void onOpened() {
+                    camera.startStreaming(752, 416);
+                    camera.setPipeline(hubLevelPipeline);
+            }
+        
+            @Override
+            public void onError(int errorCode) {
+                //TODO do something here or something
+            }
+          });
         }
 
         //DOCUMENT
         public double getTurnPower() {
                 // why is this even here
-                return vision_PID.calculate(0, System.getNanoTime()); //TODO actually make work
+                return vision_PID.calculate(0); //TODO actually make work
         }
 
         //DOCUMENT
@@ -91,7 +100,7 @@ public class Vision extends Subsystem {
                 private double MAX_WIDTH = 200; // in pixels
                 private double MAX_HEIGHT = 200;
 
-                private Mat mask = new Mat(Constants.visionWidth, Constants.visionHeight); //TODO make this have correct type
+                //private Mat mask = new Mat(Constants.CAMERA_WIDTH, Constants.CAMERA_HEIGHT); //TODO make this have correct type
 
                 public int getTargetAutoLeveL() {
                         return targetHubLevel;

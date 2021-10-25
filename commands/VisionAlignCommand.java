@@ -7,11 +7,11 @@ import org.firstinspires.ftc.teamcode.subsystems.Vision;
 
 //TODO why the heck does this exist (yes, I know I created it but still)
 // what was I going to use this for again?
-public class DriveCommand extends Command {
+public class VisionAlignCommand extends Command {
    private final Drivetrain drivetrain;
    private final Vision vision;
    
-   public DriveCommand(Drivetrain drivetrain, Vision vision) {
+   public VisionAlignCommand(Drivetrain drivetrain, Vision vision) {
       this.drivetrain = drivetrain;
       this.vision = vision;
    }
