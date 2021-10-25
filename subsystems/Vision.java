@@ -28,6 +28,8 @@ public class Vision extends Subsystem {
 
         private PIDController vision_PID;
         
+        private TargetHubLevelPipeline hubLevelPipeline;
+        
         //DOCUMENT
         public Vision(Telemetry telemetry, HardwareMap hardwareMap) {
                 this.telemetry = telemetry;
@@ -36,34 +38,68 @@ public class Vision extends Subsystem {
                 OpenCvCamera camera = OpenCvCameraFactory.getInstance().createWebcam(webcamName);
 
                 vision_PID = new PIDController(Constants.visionPID);
+
+                hubLevelPipeline = new TargetHubLevelPipeline();
         }
         
         //DOCUMENT
         public void init() {
                 camera.openCameraDevice();
                 camera.startStreaming(752, 416);
-                camera.setPipeline(new RockettesPipeline());
+                camera.setPipeline(hubLevelPipeline);
         }
 
         //DOCUMENT
         public double getTurnPower() {
+                // why is this even here
                 return vision_PID.calculate(0, System.getNanoTime()); //TODO actually make work
         }
 
         //DOCUMENT
         public boolean isAligned() {
                 return false; //TODO actually make work
+                //wait why do I have this
+        }
+
+        //DOCUMENT
+        public void storeTargetHubLevel() {
+                // wait maybe I don't need this anymore
+        }
+
+        //DOCUMENT
+        public int getTargetAutoLeveL() {
+                return hubLevelPipeline.getTargetAutoLeveL();
+        }
+
+        //DOCUMENT
+        public boolean hasTargetLevel() {
+                return hubLevelPipeline.getTargetAutoLeveL() > -1;
         }
         
         @Override
         public void periodic() {
-                // honestly we don't do much here. 
+                // honestly we don't do much here. Everything's already called automatically with the pipeline and stuff
+                //TODO telemetry
         }
         
         //DOCUMENT
-        public class RockettesPipeline extends OpenCvPipeline {
+        protected class TargetHubLevelPipeline extends OpenCvPipeline {
+                private int targetHubLevel = -1;
+
+                private Scalar LOWER_GREEN = new Scalar(0, 0, 0);
+                private Scalar UPPER_GREEN = new Scalar(255, 255, 255);
+                private double MAX_WIDTH = 200; // in pixels
+                private double MAX_HEIGHT = 200;
+
+                private Mat mask = new Mat(Constants.visionWidth, Constants.visionHeight); //TODO make this have correct type
+
+                public int getTargetAutoLeveL() {
+                        return targetHubLevel;
+                }
+
                 @Override
                 public Mat processFrame(Mat input) {
+                        //TODO do actual vision processing
                         /**
                          Scalar LOWER = new Scalar(100, 100, 100);
                          Scalar UPPER = new Scalar(200, 200, 200);
@@ -71,7 +107,10 @@ public class Vision extends Subsystem {
                          Core.inRange(input, LOWER, UPPER, mask);
                          Core.bitwise_and(input, input, mask);
                         */
-                        
+
+                        //TODO actually update this based on actual processing
+                        targetHubLevel = -1;
+
                         return input;
                 }
                 
