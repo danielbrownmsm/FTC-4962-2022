@@ -19,7 +19,7 @@
  * SOFTWARE.
  */
 
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.teleops;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -39,7 +39,7 @@ import org.openftc.easyopencv.OpenCvPipeline;
  * This version of the internal camera example uses EasyOpenCV's interface to the
  * original Android camera API
  */
-@TeleOp(name="OpenCV Sample")
+@TeleOp(name="OpenCV Sample", group="noncomp")
 public class OpenCVSampleOpMode extends OpMode {
     OpenCvCamera phoneCam;
 
@@ -217,11 +217,13 @@ public class OpenCVSampleOpMode extends OpMode {
                     new Scalar(0, 255, 0), 4);*/
             //Mat gray = new Mat();
             //Imgproc.cvtColor(input, input, Imgproc.COLOR_BGR2GRAY);
-            Scalar LOWER = new Scalar(100, 100, 100);
-            Scalar UPPER = new Scalar(200, 200, 200);
-            Mat mask = Mat.eye(640, 480, input.type());
-            Core.inRange(input, LOWER, UPPER, mask);
-            Core.bitwise_and(input, input, mask);
+            //Scalar LOWER = new Scalar(100, 100, 100);
+            //Scalar UPPER = new Scalar(200, 200, 200);
+            //Mat mask = Mat.eye(640, 480, input.type());
+            telemetry.addData("mat type", input.type());
+            telemetry.update();
+            //Core.inRange(input, LOWER, UPPER, mask);
+            //Core.bitwise_and(input, input, mask);
             
             //Imgproc.threshold(input, input, )
 

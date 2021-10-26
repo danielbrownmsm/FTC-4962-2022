@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
 import com.qualcomm.robotcore.hardware.DcMotorImplEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import com.qualcomm.robotcore.hardware.DcMotorImpl;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -9,7 +11,10 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import org.firstinspires.ftc.teamcode.PIDController;
+import org.firstinspires.ftc.teamcode.control.PIDController;
+import org.firstinspires.ftc.teamcode.Constants;
+import org.firstinspires.ftc.teamcode.commandframework.Subsystem;
+
 
 /**
  * A class to represent the functionality of the drivetraion of the robot
@@ -21,7 +26,7 @@ import org.firstinspires.ftc.teamcode.PIDController;
  * This class includes a periodic() function, please call this function every
  * loop iteration to make the robot run optimally
  */
-public class Drivetrain {
+public class Drivetrain extends Subsystem {
    private DcMotorImplEx leftFront;
    private DcMotorImplEx leftBack;
    private DcMotorImplEx rightFront;
@@ -35,24 +40,52 @@ public class Drivetrain {
    
    private PIDController distancePID;
    private PIDController headingPID;
+   private PIDController turnPID;
    
    //Pure-pursuit? idk what to do man
+   
+   private Telemetry telemetry;
 
    
    /**
     * Creates a new Drivetrain subsystem
     * 
     * @param map the hardware map instace provided in the opmode
+    * @param telemetry the telemetry instance provided in the opmode
     */
     //TODO maybe some kind of simulation/testing support?
-   public Drivetrain(HardwareMap map) {
+   public Drivetrain(Telemetry telemetry, HardwareMap map) {
+      this.telemetry = telemetry;
+      
       leftFront = map.get(DcMotorImplEx.class, "leftFront");
       leftBack = map.get(DcMotorImplEx.class, "leftBack");
       rightFront = map.get(DcMotorImplEx.class, "rightFront");
       rightBack = map.get(DcMotorImplEx.class, "rightBack");
+      
+      rightFront.setDirection(DcMotorSimple.Direction.REVERSE);
+      rightBack.setDirection(DcMotorSimple.Direction.REVERSE);
 
       imu1 = map.get(BNO055IMU.class, "imu1");
       imu2 = map.get(BNO055IMU.class, "imu2");
+      
+      distancePID = new PIDController(Constants.distancePID);
+      headingPID = new PIDController(Constants.headingPID);
+      turnPID = new PIDController(Constants.turnPID);
+
+      distancePID.setTolerance(0.125, 0.125);
+      headingPID.setTolerance(0.5, 0.125);
+      turnPID.setTolerance(0.25, 0.125);
+   }
+   
+   // DOCUMENT
+   public void init() {
+      resetGyros();
+      resetEncoders();
+      distancePID.reset();
+      headingPID.reset();
+      turnPID.reset();
+      // idk what else
+      //TODO make this like zero all the sensors and calibrate and stuff
    }
    
    /**
@@ -67,13 +100,66 @@ public class Drivetrain {
       rightBack.setPower(rightPower);
    }
    
+   //DOCUMENT
+   //TODO make actually work
+   public void arcadeDrive(double power, double turn) {
+      leftFront.setPower(power - turn);
+      leftBack.setPower(power - turn);
+      rightFront.setPower(power + turn);
+      rightBack.setPower(power + turn);
+   }
+   
+   // ???
+   public void prepareTurn() {
+      resetGyros();
+      turnPID.reset();
+   }
+   
+   //DOCUMENT
+   public void prepareDistance() {
+      resetEncoders();
+      resetGyros();
+      distancePID.reset();
+      headingPID.reset();
+      headingPID.setSetpoint(getHeading());
+   }
+   
+   //DOCUMENT
+   public void turnToHeading(double angle) {
+      turnPID.setSetpoint(angle);
+      arcadeDrive(0, turnPID.calculate(getHeading(), System.nanoTime()));
+   }
+   
+   //TODO make this use inches and stuff
+   public void driveDistance(double distance) {
+      distancePID.setSetpoint(distance);
+      arcadeDrive(distancePID.calculate(getAverageDistance(), System.nanoTime()), 
+                  headingPID.calculate(getHeading(), System.nanoTime()));
+   }
+   
+   //DOCUMENT
+   public boolean atHeadingSetpoint() {
+      return headingPID.atSetpoint();
+   }
+   
+   //DOCUMENT
+   public boolean atDistanceSetpoint() {
+      return distancePID.atSetpoint();
+   }
+   
+   //DOCUMENT
+   public boolean atTurnSetpoint() {
+      return turnPID.atSetpoint();
+   }
+   
    /**
     * Gets the heading of the robot, in degrees, from 0-360 
     * @return the heading of the robot
     */
    public double getHeading() {
       //TODO fuse this and make it more accurate
-      //TODO use the other IMU
+      //TODO use the other IMU as well
+      //TODO make sure this is actually correct and we don't need AxesReference.EXTRINSIC or anything
       //TODO correct for placement of hub on robot and center of rotation and all that
       return imu1.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES).thirdAngle;
    };
@@ -92,7 +178,10 @@ public class Drivetrain {
     * @return the distance, in inches, of the left side
     */
    public double getLeftDistance() {
-      return (leftFront.getCurrentPosition() + leftBack.getCurrentPosition()) / 2;      
+      return 
+         ((leftFront.getCurrentPosition() + leftBack.getCurrentPosition()) / 2)
+         / Constants.TICKS_PER_REV
+         * Math.PI * Constants.WHEEL_DIAMETER;      
    };
    
    /**
@@ -100,7 +189,10 @@ public class Drivetrain {
     * @return the distance, in inches, of the right side
     */
    public double getRightDistance() {
-      return (rightFront.getCurrentPosition() + rightBack.getCurrentPosition()) / 2;      
+      return 
+         ((rightFront.getCurrentPosition() + rightBack.getCurrentPosition()) / 2)
+         / Constants.TICKS_PER_REV
+         * Math.PI * Constants.WHEEL_DIAMETER;      
    };
    
    /**
@@ -122,16 +214,18 @@ public class Drivetrain {
     * Resets (zeros) the gyro. Do we even need this? Yeah kinda I guess...
     */
    public void resetGyros() {
-      //TODO
-   };
-   
-   /** I don't freaking know*/
-   public void resetPID() {
-      
-   };
-   
-   public void periodic() {
-      //IDK???
+      //TODO make turning logic and math stuff work
+      //imu1.reset();
+      //imu2.reset();
       //???
+   };
+   
+   @Override
+   public void periodic() {
+      //TODO telemetry stuff here
+      telemetry.addData("drivetrain distance", getAverageDistance());
+      telemetry.addData("left distance", getLeftDistance());
+      telemetry.addData("right distance", getRightDistance());
+      telemetry.addData("gyro reading", getHeading());
    }
 }
