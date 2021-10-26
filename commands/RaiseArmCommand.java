@@ -27,7 +27,7 @@ public class RaiseArmCommand extends Command {
 
    @Override
    public boolean isFinished() {
-      // we're finished when the arm has reached the setpoint
-      return arm.armAtSetpoint();
+      // only need to run this once because the periodic() handles power calculations
+      return true;
    }
 }

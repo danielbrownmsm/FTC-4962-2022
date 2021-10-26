@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
 import com.qualcomm.robotcore.hardware.DcMotorImplEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import com.qualcomm.robotcore.hardware.DcMotorImpl;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -60,6 +61,9 @@ public class Drivetrain extends Subsystem {
       leftBack = map.get(DcMotorImplEx.class, "leftBack");
       rightFront = map.get(DcMotorImplEx.class, "rightFront");
       rightBack = map.get(DcMotorImplEx.class, "rightBack");
+      
+      rightFront.setDirection(DcMotorSimple.Direction.REVERSE);
+      rightBack.setDirection(DcMotorSimple.Direction.REVERSE);
 
       imu1 = map.get(BNO055IMU.class, "imu1");
       imu2 = map.get(BNO055IMU.class, "imu2");
@@ -215,5 +219,7 @@ public class Drivetrain extends Subsystem {
    @Override
    public void periodic() {
       //TODO telemetry stuff here
+      telemetry.addData("drivetrain distance", getAverageDistance());
+      telemetry.addData("gyro reading", getHeading());
    }
 }

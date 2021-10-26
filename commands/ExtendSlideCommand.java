@@ -28,7 +28,7 @@ public class ExtendSlideCommand extends Command {
    
    @Override
    public boolean isFinished() {
-      // we are done if the linear slide has reached it's setpiont
-      return arm.linearSlideAtSetpoint();
+      // only need to run this once because the periodic() handles power calculations
+      return true;
    }
 }

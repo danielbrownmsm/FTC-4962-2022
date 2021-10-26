@@ -26,7 +26,6 @@ import org.firstinspires.ftc.teamcode.commandframework.Subsystem;
  * loop iteration to make the robot run optimally
  */
 public class Arm extends Subsystem {
-   //TODO telemetry
    private DcMotorImplEx turntable;
    private DcMotorImplEx arm;
    private DcMotorImplEx linearSlide;
@@ -37,6 +36,8 @@ public class Arm extends Subsystem {
    private PIDController turntable_PID;
    private PIDController arm_PID;
    private PIDController linearSlide_PID;
+   
+   private Telemetry telemetry;
    
    // these are here as hard limits to ensure nothing breaks too badly
    private TouchSensor linearSlideSensor; //???
@@ -53,6 +54,8 @@ public class Arm extends Subsystem {
     */
     //TODO maybe some kind of simulation/testing support?
    public Arm(Telemetry telemetry, HardwareMap map) {
+      this.telemetry = telemetry;
+      
       turntable = map.get(DcMotorImplEx.class, "turntable");
       arm = map.get(DcMotorImplEx.class, "arm");
       linearSlide = map.get(DcMotorImplEx.class, "linearSlide");
@@ -66,6 +69,8 @@ public class Arm extends Subsystem {
       turntable_PID = new PIDController(Constants.tablePID);
       arm_PID = new PIDController(Constants.armPID);
       linearSlide_PID = new PIDController(Constants.linearSlidePID);
+      
+      resetEncoders();
    }
    
    public void init() {
@@ -150,13 +155,13 @@ public class Arm extends Subsystem {
    //DOCUMENT
    public double getTurntableAngle() {
       // degrees
-      return turntable.getCurrentPosition() / Constants.TICKS_PER_REV / 360;
+      return turntable.getCurrentPosition() / Constants.TICKS_PER_REV * 360;
    }
 
    //DOCUMENT
    public double getArmAngle() {
       // degrees
-      return arm.getCurrentPosition() / Constants.TICKS_PER_REV / 360;
+      return arm.getCurrentPosition() / Constants.TICKS_PER_REV * 360 / 4; // gear ratio of 4:1
    }
 
    //DOCUMENT
@@ -187,6 +192,14 @@ public class Arm extends Subsystem {
       turntable.setPower(turntable_PID.calculate(getTurntableAngle()));
       arm.setPower(arm_PID.calculate(getArmAngle()));
       linearSlide.setPower(linearSlide_PID.calculate(getLinearSlideDistance()));
+      
+      telemetry.addData("arm reading", getArmAngle());
+      telemetry.addData("turntable reading", getTurntableAngle());
+      telemetry.addData("linear slide reading", getLinearSlideDistance());
+      
+      telemetry.addData("arm setpoint", arm_PID.getSetpoint());
+      telemetry.addData("turntable setpoint", turntable_PID.getSetpoint());
+      telemetry.addData("linear slide setpoint", linearSlide_PID.getSetpoint());
       
       //???
       if (!intakeSensor.isPressed()) {

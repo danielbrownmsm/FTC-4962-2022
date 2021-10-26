@@ -74,7 +74,7 @@ public class CommandTeleOp extends OpMode {
       
       drivetrain.init();
       arm.init();
-      vision.init();
+      //vision.init();
       
       
       // commands
@@ -82,8 +82,8 @@ public class CommandTeleOp extends OpMode {
       intakeIn = new IntakeCommand(arm, -1);
       intakeOut = new IntakeCommand(arm, 1);
       
-      tableLeft = new IncrementTableCommand(arm, 1);
-      tableRight = new IncrementTableCommand(arm, -1);
+      tableLeft = new IncrementTableCommand(arm, -1);
+      tableRight = new IncrementTableCommand(arm, 1);
       
       raiseArm = new RaiseArmCommand(arm, 1);
       lowerArm = new RaiseArmCommand(arm, -1);
@@ -103,8 +103,8 @@ public class CommandTeleOp extends OpMode {
       dpadUp2.whileHeld(raiseArm);
       dpadDown2.whileHeld(lowerArm);
       
-      aButton2.whenPressed(intakeIn);
-      bButton2.whenPressed(intakeOut);
+      aButton2.whileHeld(intakeIn);
+      bButton2.whileHeld(intakeOut);
    }
    
    @Override

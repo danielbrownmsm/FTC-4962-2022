@@ -22,13 +22,13 @@ public class IncrementTableCommand extends Command {
    
    @Override
    public void execute() {
-      // turn the table by that much
+      // set the setpoint to increment by that much
       arm.incrementTurntable(angle);
    }
    
    @Override
    public boolean isFinished() {
-      // we're done if the table has reached the setpoint
-      return arm.turntableAtSetpoint();
+      // only need to run this once because the periodic() handles power calculations
+      return true;
    }
 }
