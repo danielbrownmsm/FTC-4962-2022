@@ -36,6 +36,8 @@ public class Vision extends Subsystem {
                 
                 WebcamName webcamName = hardwareMap.get(WebcamName.class, "Webcam1");
                 OpenCvCamera camera = OpenCvCameraFactory.getInstance().createWebcam(webcamName);
+                assert camera != null; // if this _is_ actually the problem and it's just not working then I have
+                // absolutely no freaking idea how to fix it or why it's like this like *AAAAGGGGHHHHH* but hopefully that's not the case
 
                 vision_PID = new PIDController(Constants.visionPID);
 

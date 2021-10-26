@@ -224,6 +224,8 @@ public class Drivetrain extends Subsystem {
    public void periodic() {
       //TODO telemetry stuff here
       telemetry.addData("drivetrain distance", getAverageDistance());
+      telemetry.addData("left distance", getLeftDistance());
+      telemetry.addData("right distance", getRightDistance());
       telemetry.addData("gyro reading", getHeading());
    }
 }

@@ -93,7 +93,11 @@ public class Arm extends Subsystem {
     * @param angle the angle for the turntable to PID to
     */
    public void rotateTurntable(double angle) {
-      //TODO continuous rotation? What about wires? Some kind of clamping?
+      // a limit on angle so we don't kill our wires
+      if (Math.abs(angle) > Constants.MAX_TURNTABLE) {
+         angle = Constants.MAX_TURNTABLE;
+      }
+
       turntable_PID.setSetpoint(angle);
    }
    
@@ -112,7 +116,14 @@ public class Arm extends Subsystem {
     * @param angle the angle for the arm to PID to, in degrees
     */
    public void setArm(double angle) {
-      //TODO some kind of clamping?
+      // clamp so we can't run over our arm and just wreck it (with linear slide all the way in.
+      //   this won't help you if you do that)
+      if (angle < Constants.MIN_ARM) {
+         angle = Constants.MIN_ARM;
+      } else if (angle > Constants.MAX_ARM) {
+         angle = Constants.MAX_ARM;
+      }
+
       arm_PID.setSetpoint(angle);
    }
    
@@ -131,7 +142,13 @@ public class Arm extends Subsystem {
     * @param dist the distance for the linear slide to PID to
     */
    public void setLinearSlide(double dist) {
-      //TODO some kind of clamping?
+      // clamping so we don't absolutely wreck ourselves
+      if (dist > Constants.MAX_LINEAR_SLIDE) {
+         dist = Constants.MAX_LINEAR_SLIDE;
+      } else if (dist < Constants.MIN_LINEAR_SLIDE) {
+         dist = Constants.MIN_LINEAR_SLIDE;
+      }
+
       //TODO can we even have/do we even need this kind of functionality? Maybe just make it a boolean thing?
       linearSlide_PID.setSetpoint(dist);
    }
@@ -205,6 +222,8 @@ public class Arm extends Subsystem {
       telemetry.addData("turntable setpoint", turntable_PID.getSetpoint());
       telemetry.addData("linear slide setpoint", linearSlide_PID.getSetpoint());
       
+      telemetry.addData("intake power", intakePower);
+
       //???
       if (!intakeSensor.isPressed()) {
          intake1.setPower(intakePower);
