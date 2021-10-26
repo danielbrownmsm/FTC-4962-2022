@@ -71,6 +71,10 @@ public class Drivetrain extends Subsystem {
       distancePID = new PIDController(Constants.distancePID);
       headingPID = new PIDController(Constants.headingPID);
       turnPID = new PIDController(Constants.turnPID);
+
+      distancePID.setTolerance(0.125, 0.125);
+      headingPID.setTolerance(0.5, 0.125);
+      turnPID.setTolerance(0.25, 0.125);
    }
    
    // DOCUMENT

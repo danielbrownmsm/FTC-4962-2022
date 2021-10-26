@@ -14,8 +14,8 @@ public class PIDController {
     private double totalError = 0;
     private double velocityError = 0;
 
-    private double tolerance = 0;
-    private double velocityTolerance = 0;
+    private double tolerance = 0.2;
+    private double velocityTolerance = 0.2;
 
     private double lastTime = 0;
     private double setpoint = 0;

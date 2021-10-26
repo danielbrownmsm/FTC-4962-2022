@@ -70,6 +70,10 @@ public class Arm extends Subsystem {
       arm_PID = new PIDController(Constants.armPID);
       linearSlide_PID = new PIDController(Constants.linearSlidePID);
       
+      turntable_PID.setTolerance(0.5, 0.25);
+      arm_PID.setTolerance(0.5, 0.25);
+      linearSlide_PID.setTolerance(0.25, 0.25);
+
       resetEncoders();
    }
    
