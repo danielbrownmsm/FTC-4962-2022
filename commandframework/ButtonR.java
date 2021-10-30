@@ -24,7 +24,7 @@ public class ButtonR {
             public void run() {
                 boolean state = get();
                 
-                if (state && !lastState) {
+                if (!state && lastState) {
                     CommandScheduler.getInstance().schedule(command);
                 }
                 lastState = state;

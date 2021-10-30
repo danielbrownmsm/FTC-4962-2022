@@ -82,8 +82,19 @@ public class Arm extends Subsystem {
       turntable_PID.reset();
       arm_PID.reset();
       linearSlide_PID.reset();
+      
+      turntable_PID.setSetpoint(0);
+      arm_PID.setSetpoint(0);
+      linearSlide_PID.setSetpoint(0);
 
       resetEncoders();
+      
+      arm.setPower(0);
+      turntable.setPower(0);
+      linearSlide.setPower(0);
+      
+      intake1.setPower(0);
+      intake2.setPower(0);
    }
    
    /**

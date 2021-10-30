@@ -84,6 +84,11 @@ public class Drivetrain extends Subsystem {
       distancePID.reset();
       headingPID.reset();
       turnPID.reset();
+      
+      leftFront.setPower(0);
+      leftBack.setPower(0);
+      rightFront.setPower(0);
+      rightBack.setPower(0);
       // idk what else
       //TODO make this like zero all the sensors and calibrate and stuff
    }

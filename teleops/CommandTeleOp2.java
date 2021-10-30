@@ -3,18 +3,21 @@ package org.firstinspires.ftc.teamcode.teleops;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
-import org.firstinspires.ftc.teamcode.commandframework.CommandScheduler;
+import org.firstinspires.ftc.teamcode.commandframework.CommandScheduler2;
 import org.firstinspires.ftc.teamcode.commandframework.ButtonR;
 import org.firstinspires.ftc.teamcode.commandframework.ButtonR.ButtonType;
 import org.firstinspires.ftc.teamcode.subsystems.*;
 import org.firstinspires.ftc.teamcode.commands.*;
 
 
-@TeleOp(name="Competition TeleOp", group="comp")
-public class CommandTeleOp extends OpMode {
+@TeleOp(name="Experimental Competition TeleOp", group="comp")
+public class CommandTeleOp2 extends OpMode {
+   private CommandScheduler2 scheduler;
+   
    private Drivetrain drivetrain;
    private Arm arm;
    private Vision vision;
+   private Wheel wheel;
    
    // arm commands
    private IntakeCommand intakeIn;
@@ -28,6 +31,12 @@ public class CommandTeleOp extends OpMode {
    
    private ExtendSlideCommand extendSlide;
    private ExtendSlideCommand retractSlide;
+   
+   private ArmPresetCommand setArmLevel3;
+   private ArmPresetCommand setArmLevel1;
+   
+   private SetWheelCommand turnWheel;
+   private SetWheelCommand stopWheel;
    
    // drivetrain commands
    private DriveCommand driveTeleOp;
@@ -48,8 +57,14 @@ public class CommandTeleOp extends OpMode {
    private ButtonR dpadLeft2;
    private ButtonR dpadRight2;
    
+   private ButtonR aButton1;
+   private ButtonR bButton1;
+   
    @Override
    public void init() {
+      // scheduler
+      scheduler = new CommandScheduler2(telemetry);
+      
       // buttons
       xButton2 = new ButtonR(gamepad2, ButtonType.X);
       yButton2 = new ButtonR(gamepad2, ButtonType.Y);
@@ -65,45 +80,62 @@ public class CommandTeleOp extends OpMode {
       dpadDown2 = new ButtonR(gamepad2, ButtonType.DpadDown);
       dpadLeft2 = new ButtonR(gamepad2, ButtonType.DpadLeft);
       dpadRight2 = new ButtonR(gamepad2, ButtonType.DpadRight);
-
+      
+      aButton1 = new ButtonR(gamepad1, ButtonType.A);
+      bButton1 = new ButtonR(gamepad1, ButtonType.B);
       
       // subsystems
       drivetrain = new Drivetrain(telemetry, hardwareMap);
       arm = new Arm(telemetry, hardwareMap);
-      vision = new Vision(telemetry, hardwareMap);
+      wheel = new Wheel(telemetry, hardwareMap);
+      //vision = new Vision(telemetry, hardwareMap);
       
       drivetrain.init();
       arm.init();
+      wheel.init();
       //vision.init();
       
-      
       // commands
-      //TODO change values to be better
       intakeIn = new IntakeCommand(arm, -1);
       intakeOut = new IntakeCommand(arm, 1);
       
-      tableLeft = new IncrementTableCommand(arm, -1);
-      tableRight = new IncrementTableCommand(arm, 1);
+      tableLeft = new IncrementTableCommand(arm, -2);
+      tableRight = new IncrementTableCommand(arm, 2);
       
-      raiseArm = new RaiseArmCommand(arm, 1);
-      lowerArm = new RaiseArmCommand(arm, -1);
+      raiseArm = new RaiseArmCommand(arm, 1.5);
+      lowerArm = new RaiseArmCommand(arm, -1.5);
       
       extendSlide = new ExtendSlideCommand(arm, 1);
       retractSlide = new ExtendSlideCommand(arm, -1);
       
+      setArmLevel3 = new ArmPresetCommand(arm, 3);
+      setArmLevel1 = new ArmPresetCommand(arm, 1);
+      
+      // it's time to get wheel, cause things are getting wheely wheel around here
+      turnWheel = new SetWheelCommand(wheel, 1);
+      stopWheel = new SetWheelCommand(wheel, 0);
 
       driveTeleOp = new DriveCommand(drivetrain, gamepad1);
-      CommandScheduler.getInstance().schedule(driveTeleOp); // schedule our command already
+      CommandScheduler2.schedule(driveTeleOp); // schedule our command already
 
       // bind commands
-      rightBumper2.whileHeld(tableRight);
-      leftBumper2.whileHeld(tableLeft);
+      dpadLeft2.whileHeld(tableRight);
+      dpadRight2.whileHeld(tableLeft);
       
       dpadUp2.whileHeld(raiseArm);
       dpadDown2.whileHeld(lowerArm);
       
+      rightBumper2.whileHeld(extendSlide);
+      leftBumper2.whileHeld(retractSlide);
+      
       aButton2.whileHeld(intakeIn);
       bButton2.whileHeld(intakeOut);
+      
+      yButton2.whenPressed(setArmLevel3);
+      xButton2.whenPressed(setArmLevel1);
+      
+      aButton1.whenPressed(turnWheel);
+      aButton1.whenReleased(stopWheel);
    }
    
    @Override
@@ -112,7 +144,7 @@ public class CommandTeleOp extends OpMode {
    
    @Override
    public void loop() {
-      CommandScheduler.getInstance().loop();
+      CommandScheduler2.loop();
    }
    
    @Override
