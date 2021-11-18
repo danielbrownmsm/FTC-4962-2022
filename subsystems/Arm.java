@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
 import com.qualcomm.robotcore.hardware.DcMotorImplEx;
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import com.qualcomm.robotcore.hardware.CRServoImpl;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -8,7 +9,9 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.hardware.CRServoImplEx;
 
-import org.firstinspires.ftc.teamcode.PIDController;
+import org.firstinspires.ftc.teamcode.control.PIDController;
+import org.firstinspires.ftc.teamcode.Constants;
+import org.firstinspires.ftc.teamcode.commandframework.Subsystem;
 
 /**
  * A class to represent the functionality of the manipulator on the robot
@@ -22,8 +25,7 @@ import org.firstinspires.ftc.teamcode.PIDController;
  * This class includes a periodic() function, please call this function every
  * loop iteration to make the robot run optimally
  */
-public class Arm {
-   //TODO telemetry
+public class Arm extends Subsystem {
    private DcMotorImplEx turntable;
    private DcMotorImplEx arm;
    private DcMotorImplEx linearSlide;
@@ -34,6 +36,8 @@ public class Arm {
    private PIDController turntable_PID;
    private PIDController arm_PID;
    private PIDController linearSlide_PID;
+   
+   private Telemetry telemetry;
    
    // these are here as hard limits to ensure nothing breaks too badly
    private TouchSensor linearSlideSensor; //???
@@ -49,7 +53,9 @@ public class Arm {
     * @param map the hardware map instace provided in the opmode
     */
     //TODO maybe some kind of simulation/testing support?
-   public Arm(HardwareMap map) {
+   public Arm(Telemetry telemetry, HardwareMap map) {
+      this.telemetry = telemetry;
+      
       turntable = map.get(DcMotorImplEx.class, "turntable");
       arm = map.get(DcMotorImplEx.class, "arm");
       linearSlide = map.get(DcMotorImplEx.class, "linearSlide");
@@ -60,9 +66,35 @@ public class Arm {
       linearSlideSensor = map.get(TouchSensor.class, "linearSlideSensor");
       intakeSensor = map.get(TouchSensor.class, "intakeSensor");
       
-      turntable_PID = new PIDController();
-      arm_PID = new PIDController();
-      linearSlide_PID = new PIDController();
+      turntable_PID = new PIDController(Constants.tablePID);
+      arm_PID = new PIDController(Constants.armPID);
+      linearSlide_PID = new PIDController(Constants.linearSlidePID);
+      
+      turntable_PID.setTolerance(3, 1);
+      arm_PID.setTolerance(3, 1);
+      linearSlide_PID.setTolerance(0.5, 1);
+
+      resetEncoders();
+   }
+   
+   public void init() {
+      //DOCUMENT
+      turntable_PID.reset();
+      arm_PID.reset();
+      linearSlide_PID.reset();
+      
+      turntable_PID.setSetpoint(0);
+      arm_PID.setSetpoint(0);
+      linearSlide_PID.setSetpoint(0);
+
+      resetEncoders();
+      
+      arm.setPower(0);
+      turntable.setPower(0);
+      linearSlide.setPower(0);
+      
+      intake1.setPower(0);
+      intake2.setPower(0);
    }
    
    /**
@@ -72,8 +104,22 @@ public class Arm {
     * @param angle the angle for the turntable to PID to
     */
    public void rotateTurntable(double angle) {
-      //TODO continuous rotation? What about wires? Some kind of clamping?
+      // a limit on angle so we don't kill our wires
+      if (Math.abs(angle) > Constants.MAX_TURNTABLE) {
+         angle = Constants.MAX_TURNTABLE;
+      }
+
       turntable_PID.setSetpoint(angle);
+   }
+   
+   //DOCUMENT
+   public void incrementTurntable(double amount) {
+      turntable_PID.setSetpoint(amount + turntable_PID.getSetpoint());
+   }
+   
+   //DOCUMENT
+   public boolean armAtSetpoint() {
+      return arm_PID.atSetpoint();
    }
    
    /**
@@ -81,8 +127,28 @@ public class Arm {
     * @param angle the angle for the arm to PID to, in degrees
     */
    public void setArm(double angle) {
-      //TODO some kind of clamping?
+      // clamp so we can't run over our arm and just wreck it (with linear slide all the way in.
+      //   this won't help you if you do that)
+      if (angle < Constants.MIN_ARM) {
+         angle = Constants.MIN_ARM;
+      } else if (angle > Constants.MAX_ARM) {
+         angle = Constants.MAX_ARM;
+      }
+
       arm_PID.setSetpoint(angle);
+      
+      //TEMP
+      arm.setPower(arm_PID.calculate(getArmAngle()));
+   }
+   
+   //DOCUMENT
+   public void incrementArm(double amount) {
+      arm_PID.setSetpoint(amount + arm_PID.getSetpoint());
+   }
+   
+   //DOCUMENT
+   public boolean turntableAtSetpoint() {
+      return turntable_PID.atSetpoint();
    }
    
    /**
@@ -90,9 +156,25 @@ public class Arm {
     * @param dist the distance for the linear slide to PID to
     */
    public void setLinearSlide(double dist) {
-      //TODO some kind of clamping?
+      // clamping so we don't absolutely wreck ourselves
+      if (dist > Constants.MAX_LINEAR_SLIDE) {
+         dist = Constants.MAX_LINEAR_SLIDE;
+      } else if (dist < Constants.MIN_LINEAR_SLIDE) {
+         dist = Constants.MIN_LINEAR_SLIDE;
+      }
+
       //TODO can we even have/do we even need this kind of functionality? Maybe just make it a boolean thing?
       linearSlide_PID.setSetpoint(dist);
+   }
+   
+   //DOCUMENT
+   public void incrementLinearSlide(double amount) {
+      linearSlide_PID.setSetpoint(amount + linearSlide_PID.getSetpoint());
+   }
+    
+   //DOCUMENT
+   public boolean linearSlideAtSetpoint() {
+      return linearSlide_PID.atSetpoint();
    }
    
    /**
@@ -104,23 +186,62 @@ public class Arm {
       //intake2.setPower(power);
       intakePower = power;
    }
+
+   //DOCUMENT
+   public double getTurntableAngle() {
+      // degrees
+      return turntable.getCurrentPosition() / Constants.TICKS_PER_REV * 360;
+   }
+
+   //DOCUMENT
+   public double getArmAngle() {
+      // degrees
+      return arm.getCurrentPosition() / Constants.TICKS_PER_REV * 360 / 4; // gear ratio of 4:1
+   }
+
+   //DOCUMENT
+   public double getLinearSlideDistance() {
+      // degrees
+      return linearSlide.getCurrentPosition() / Constants.TICKS_PER_REV * Constants.linearSlideDiameter * Math.PI;
+   }
    
-   //@Override
+   public void resetEncoders() {
+      turntable.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+      arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+      linearSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+      
+      turntable.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+      arm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+      linearSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+   }
+
+
    /**
     * The subsystem's periodic function.
     * This makes all the PIDs go to their setpoints, and keeps
     * track of sensors so we don't run into hard limits. In the
     * future maybe also does other stuff?
     */
+    @Override
    public void periodic() {
-      turntable.setPower(turntable_PID.calculate(turntable.getCurrentPosition()));
-      arm.setPower(arm_PID.calculate(arm.getCurrentPosition()));
-      linearSlide.setPower(linearSlide_PID.calculate(linearSlide.getCurrentPosition()));
+      turntable.setPower(turntable_PID.calculate(getTurntableAngle()));
+      arm.setPower(arm_PID.calculate(getArmAngle()));
+      linearSlide.setPower(linearSlide_PID.calculate(getLinearSlideDistance()));
       
+      telemetry.addData("arm reading", getArmAngle());
+      telemetry.addData("turntable reading", getTurntableAngle());
+      telemetry.addData("linear slide reading", getLinearSlideDistance());
+      
+      telemetry.addData("arm setpoint", arm_PID.getSetpoint());
+      telemetry.addData("turntable setpoint", turntable_PID.getSetpoint());
+      telemetry.addData("linear slide setpoint", linearSlide_PID.getSetpoint());
+      
+      telemetry.addData("intake power", intakePower);
+
       //???
       if (!intakeSensor.isPressed()) {
          intake1.setPower(intakePower);
-         intake2.setPower(intakePower);
+         intake2.setPower(-intakePower);
       }
    }
 }

@@ -19,14 +19,21 @@
  * SOFTWARE.
  */
 
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.teleops;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import java.util.List;
+import java.util.ArrayList;
+
 import org.opencv.core.Mat;
+import org.opencv.core.Rect;
+import org.opencv.core.MatOfPoint;
 import org.opencv.core.Point;
 import org.opencv.core.Scalar;
+import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 import org.opencv.core.Core;
 import org.openftc.easyopencv.OpenCvCamera;
@@ -35,13 +42,15 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvInternalCamera;
 import org.openftc.easyopencv.OpenCvPipeline;
 
+import org.firstinspires.ftc.teamcode.Constants;
+
 /*
  * This version of the internal camera example uses EasyOpenCV's interface to the
  * original Android camera API
  */
-@TeleOp(name="OpenCV Sample")
+@TeleOp(name="Vision Pipeline Test", group="noncomp")
 public class OpenCVSampleOpMode extends OpMode {
-    OpenCvCamera phoneCam;
+    OpenCvCamera camera;
 
     @Override
     public void init() {
@@ -54,7 +63,11 @@ public class OpenCVSampleOpMode extends OpMode {
          * single-parameter constructor instead (commented out below)
          */
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-        phoneCam = OpenCvCameraFactory.getInstance().createInternalCamera(OpenCvInternalCamera.CameraDirection.BACK, cameraMonitorViewId);
+        //phoneCam = OpenCvCameraFactory.getInstance().createInternalCamera(OpenCvInternalCamera.CameraDirection.BACK, cameraMonitorViewId);
+
+        //WebcamName webcamName = hardwareMap.get(WebcamName.class, "Webcam1");
+        //camera = OpenCvCameraFactory.getInstance().createWebcam(webcamName);
+        camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam1"), cameraMonitorViewId);
 
         // OR...  Do Not Activate the Camera Monitor View
         //phoneCam = OpenCvCameraFactory.getInstance().createInternalCamera(OpenCvInternalCamera.CameraDirection.BACK);
@@ -64,7 +77,7 @@ public class OpenCVSampleOpMode extends OpMode {
          * of a frame from the camera. Note that switching pipelines on-the-fly
          * (while a streaming session is in flight) *IS* supported.
          */
-        phoneCam.setPipeline(new SamplePipeline());
+        camera.setPipeline(new SamplePipeline());
 
         /*
          * Open the connection to the camera device. New in v1.4.0 is the ability
@@ -75,7 +88,7 @@ public class OpenCVSampleOpMode extends OpMode {
          *
          * If you really want to open synchronously, the old method is still available.
          */
-        phoneCam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
+        camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
         {
             @Override
             public void onOpened()
@@ -91,7 +104,7 @@ public class OpenCVSampleOpMode extends OpMode {
                  * For a rear facing camera or a webcam, rotation is defined assuming the camera is facing
                  * away from the user.
                  */
-                phoneCam.startStreaming(640, 480, OpenCvCameraRotation.UPRIGHT);
+                camera.startStreaming(Constants.CAMERA_HEIGHT, Constants.CAMERA_WIDTH, OpenCvCameraRotation.UPRIGHT);
             }
 
             @Override
@@ -118,12 +131,12 @@ public class OpenCVSampleOpMode extends OpMode {
         /*
          * Send some stats to the telemetry
          */
-        telemetry.addData("Frame Count", phoneCam.getFrameCount());
-        telemetry.addData("FPS", String.format("%.2f", phoneCam.getFps()));
-        telemetry.addData("Total frame time ms", phoneCam.getTotalFrameTimeMs());
-        telemetry.addData("Pipeline time ms", phoneCam.getPipelineTimeMs());
-        telemetry.addData("Overhead time ms", phoneCam.getOverheadTimeMs());
-        telemetry.addData("Theoretical max FPS", phoneCam.getCurrentPipelineMaxFps());
+        telemetry.addData("Frame Count", camera.getFrameCount());
+        telemetry.addData("FPS", String.format("%.2f", camera.getFps()));
+        telemetry.addData("Total frame time ms", camera.getTotalFrameTimeMs());
+        telemetry.addData("Pipeline time ms", camera.getPipelineTimeMs());
+        telemetry.addData("Overhead time ms", camera.getOverheadTimeMs());
+        telemetry.addData("Theoretical max FPS", camera.getCurrentPipelineMaxFps());
         telemetry.update();
 
         /*
@@ -152,7 +165,7 @@ public class OpenCVSampleOpMode extends OpMode {
              * time. Of course, this comment is irrelevant in light of the use case described in
              * the above "important note".
              */
-            phoneCam.stopStreaming();
+            camera.stopStreaming();
             //phoneCam.closeCameraDevice();
         }
 
@@ -182,7 +195,16 @@ public class OpenCVSampleOpMode extends OpMode {
     class SamplePipeline extends OpenCvPipeline
     {
         boolean viewportPaused = false;
-
+        Mat processed = new Mat(Constants.CAMERA_HEIGHT, Constants.CAMERA_WIDTH, 24);
+        Mat mask = new Mat(Constants.CAMERA_HEIGHT, Constants.CAMERA_WIDTH, 24);
+        Mat hierarchy = new Mat();
+        List<MatOfPoint> contours = new ArrayList<>();
+        Scalar LOWER = new Scalar(100, 140, 100);
+        Scalar UPPER = new Scalar(160, 255, 255);
+        Scalar color = new Scalar(0, 255, 0);
+        Mat kernel = new Mat();
+        Size size = new Size(3, 3);
+        
         /*
          * NOTE: if you wish to use additional Mat objects in your processing pipeline, it is
          * highly recommended to declare them here as instance variables and re-use them for
@@ -217,21 +239,50 @@ public class OpenCVSampleOpMode extends OpMode {
                     new Scalar(0, 255, 0), 4);*/
             //Mat gray = new Mat();
             //Imgproc.cvtColor(input, input, Imgproc.COLOR_BGR2GRAY);
-            Scalar LOWER = new Scalar(100, 100, 100);
-            Scalar UPPER = new Scalar(200, 200, 200);
-            Mat mask = Mat.eye(640, 480, input.type());
-            Core.inRange(input, LOWER, UPPER, mask);
-            Core.bitwise_and(input, input, mask);
+            //Scalar LOWER = new Scalar(100, 100, 100);
+            //Scalar UPPER = new Scalar(200, 200, 200);
+            //Mat mask = Mat.eye(640, 480, input.type());
+            //Core.inRange(input, LOWER, UPPER, mask);
+            //Core.bitwise_and(input, input, mask);
+            Imgproc.cvtColor(input, processed, Imgproc.COLOR_BGR2HSV);
+            //Imgproc.blur(processed, processed, size);
+            Core.inRange(processed, LOWER, UPPER, mask);
+            Imgproc.cvtColor(processed, processed, Imgproc.COLOR_HSV2BGR);
+            Imgproc.erode(mask, mask, kernel);
+            Core.bitwise_and(processed, processed, input, mask);
             
-            //Imgproc.threshold(input, input, )
-
+            
+            Imgproc.findContours(mask, contours, hierarchy, Imgproc.RETR_TREE, Imgproc.CHAIN_APPROX_SIMPLE);
+            //hierarchy.clear();
+            
+            // for (int contourIdx = 0; contourIdx < contours.size(); contouridx++) {
+            //     double contourArea = Imgproc.contourArea(contours.get(contourIdx));
+                
+            //     if (maxVal < contourArea) {
+                    
+            //     }
+            // }
+            
+            
+            for (int contourIdx = 0; contourIdx < contours.size(); contourIdx++) {
+                //Imgproc.drawContours(processed, contours, contourIdx, color);
+                Rect rect = Imgproc.boundingRect(contours.get(contourIdx));
+                
+                if ((rect.height - rect.width * 1.2) < 50) {
+                    Imgproc.rectangle(processed, rect, color, 5);
+                }
+            }
+            contours.clear();
+            
+        
+            //Imgproc.threshold(input, input, 0)
             /**
              * NOTE: to see how to get data from your pipeline to your OpMode as well as how
              * to change which stage of the pipeline is rendered to the viewport when it is
              * tapped, please see {@link PipelineStageSwitchingExample}
              */
 
-            return input;
+            return processed;
         }
 
         @Override
@@ -253,11 +304,11 @@ public class OpenCVSampleOpMode extends OpMode {
 
             if(viewportPaused)
             {
-                phoneCam.pauseViewport();
+                camera.pauseViewport();
             }
             else
             {
-                phoneCam.resumeViewport();
+                camera.resumeViewport();
             }
         }
     }
