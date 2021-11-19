@@ -21,7 +21,7 @@ public class VisionRaiseArm extends Command {
    @Override
    public void execute() {
        // set the arm to the correct height based off of what vision says we need to go to and the arm-height constants
-      arm.setArm(Constants.armHeight[vision.getTargetAutoLeveL()]);
+      arm.setArm(Constants.armHeight[vision.getTargetAutoLevel()]);
    }
    
    @Override

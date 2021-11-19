@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode.autos;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
-import org.firstinspires.ftc.teamcode.commandframework.CommandScheduler;
+import org.firstinspires.ftc.teamcode.commandframework.CommandScheduler2;
 import org.firstinspires.ftc.teamcode.commandframework.SequentialCommand;
 import org.firstinspires.ftc.teamcode.subsystems.*;
 import org.firstinspires.ftc.teamcode.commands.*;
@@ -18,6 +18,7 @@ public class VisionFreightWarehouseAuto extends LinearOpMode {
 
    @Override
    public void runOpMode() {
+       CommandScheduler2.init(telemetry);
       // create our subsystems
       drivetrain = new Drivetrain(telemetry, hardwareMap);
       arm = new Arm(telemetry, hardwareMap);
@@ -37,16 +38,17 @@ public class VisionFreightWarehouseAuto extends LinearOpMode {
        */
         //TODO maybe make some of these ParallelCommands so we don't take up too much time in auto
       autoCommand = new SequentialCommand(
-        new VisionStoreLevel(vision),
-        new DriveDistance(drivetrain, 1), //TODO use correct distance 
+        //new VisionStoreLevel(vision),
+        new WaitCommand(3000), // wait 3 seconds
         new VisionRaiseArm(arm, vision),
+        new DriveDistance(drivetrain, 5), //TODO use correct distance 
         new SetLinearSlide(arm, 6), //TODO use correct distance
-        new IntakeCommand(arm, -1), //TODO this needs to have a timeout or something so it can last a while
-        // or maybe have a WaitCommand() ???
+        new IntakeCommand(arm, -1) //TODO this needs to have a timeout or something so it can last a while
+        /*// or maybe have a WaitCommand() ???
         new SetLinearSlide(arm, 0), //TODO use correct distance
         new DriveDistance(drivetrain, -1), //TODO use correct distance
         new TurnHeadingCommand(drivetrain, 90), //TODO use correct angle
-        new DriveDistance(drivetrain, 12) //TODO actually use the right distance
+        new DriveDistance(drivetrain, 12) //TODO actually use the right distance*/
       );
       
       // initiallize all the subsystems
@@ -55,7 +57,7 @@ public class VisionFreightWarehouseAuto extends LinearOpMode {
       vision.init();
 
       // schedule the auto command
-      CommandScheduler.getInstance().schedule(autoCommand);
+      CommandScheduler2.schedule(autoCommand);
       
       waitForStart();
 
@@ -65,7 +67,7 @@ public class VisionFreightWarehouseAuto extends LinearOpMode {
       // loop until we are finished or we must finish
       while (!autoCommand.isFinished() && !isStopRequested()) {
          // run the command scheduler (ie the auto command, as well as all the periodic()s)
-         CommandScheduler.getInstance().loop();
+         CommandScheduler2.loop();
          sleep(5); // sleep a bit??? idk
       }
    }

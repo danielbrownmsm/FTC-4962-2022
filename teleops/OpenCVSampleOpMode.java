@@ -199,11 +199,14 @@ public class OpenCVSampleOpMode extends OpMode {
         Mat mask = new Mat(Constants.CAMERA_HEIGHT, Constants.CAMERA_WIDTH, 24);
         Mat hierarchy = new Mat();
         List<MatOfPoint> contours = new ArrayList<>();
-        Scalar LOWER = new Scalar(100, 140, 100);
-        Scalar UPPER = new Scalar(160, 255, 255);
+        Scalar LOWER = new Scalar(130, 110, 155);
+        Scalar UPPER = new Scalar(140, 255, 255);
         Scalar color = new Scalar(0, 255, 0);
         Mat kernel = new Mat();
         Size size = new Size(3, 3);
+        double maxVal = 0;
+        double targetHubAutoLevel = -1;
+        int maxValId = 0;
         
         /*
          * NOTE: if you wish to use additional Mat objects in your processing pipeline, it is
@@ -228,15 +231,6 @@ public class OpenCVSampleOpMode extends OpMode {
             /*
              * Draw a simple box around the middle 1/2 of the entire frame
              */
-            /*Imgproc.rectangle(
-                    input,
-                    new Point(
-                            input.cols()/4,
-                            input.rows()/4),
-                    new Point(
-                            input.cols()*(3f/4f),
-                            input.rows()*(3f/4f)),
-                    new Scalar(0, 255, 0), 4);*/
             //Mat gray = new Mat();
             //Imgproc.cvtColor(input, input, Imgproc.COLOR_BGR2GRAY);
             //Scalar LOWER = new Scalar(100, 100, 100);
@@ -252,7 +246,7 @@ public class OpenCVSampleOpMode extends OpMode {
             Core.bitwise_and(processed, processed, input, mask);
             
             
-            Imgproc.findContours(mask, contours, hierarchy, Imgproc.RETR_TREE, Imgproc.CHAIN_APPROX_SIMPLE);
+            Imgproc.findContours(mask, contours, hierarchy, Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);
             //hierarchy.clear();
             
             // for (int contourIdx = 0; contourIdx < contours.size(); contouridx++) {
@@ -263,14 +257,37 @@ public class OpenCVSampleOpMode extends OpMode {
             //     }
             // }
             
-            
+            maxVal = 0;
+            maxValId = 0;
             for (int contourIdx = 0; contourIdx < contours.size(); contourIdx++) {
                 //Imgproc.drawContours(processed, contours, contourIdx, color);
                 Rect rect = Imgproc.boundingRect(contours.get(contourIdx));
+                double area = rect.width * rect.height;
                 
                 if ((rect.height - rect.width * 1.2) < 50) {
-                    Imgproc.rectangle(processed, rect, color, 5);
+                    //if (rect.y > 200) {
+                        if (area > maxVal) {
+                            maxVal = area;
+                            maxValId = contourIdx;
+                        }
+                    //}
                 }
+            }
+            if (maxValId > 0 && contours.size() > 0 && maxValId < contours.size()) {
+                Rect largestRect = Imgproc.boundingRect(contours.get(maxValId));
+                Imgproc.rectangle(processed, largestRect, color, 5);
+                
+                if (largestRect.x > 530) {
+                    targetHubAutoLevel = 3;
+                } else if (400 < largestRect.x && largestRect.x < 530) {
+                    targetHubAutoLevel = 2;
+                } else if (100 < largestRect.x && largestRect.x < 300) {
+                    targetHubAutoLevel = 1;
+                } else {
+                    // set it to -1 here? but like flickering between -1 and actual?
+                }
+                
+                telemetry.addData("target auto level", targetHubAutoLevel);
             }
             contours.clear();
             

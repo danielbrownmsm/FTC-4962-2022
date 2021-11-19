@@ -114,7 +114,14 @@ public class Arm extends Subsystem {
    
    //DOCUMENT
    public void incrementTurntable(double amount) {
-      turntable_PID.setSetpoint(amount + turntable_PID.getSetpoint());
+      double newSetpoint = turntable_PID.getSetpoint() + amount;
+      if (newSetpoint < Constants.MIN_TURNTABLE) {
+         turntable_PID.setSetpoint(Constants.MIN_TURNTABLE);
+      } else if (newSetpoint > Constants.MAX_TURNTABLE) {
+         turntable_PID.setSetpoint(Constants.MAX_TURNTABLE);
+      } else {
+         turntable_PID.setSetpoint(newSetpoint);
+      }
    }
    
    //DOCUMENT
@@ -143,7 +150,14 @@ public class Arm extends Subsystem {
    
    //DOCUMENT
    public void incrementArm(double amount) {
-      arm_PID.setSetpoint(amount + arm_PID.getSetpoint());
+      double newSetpoint = arm_PID.getSetpoint() + amount;
+      if (newSetpoint < Constants.MIN_ARM) {
+         arm_PID.setSetpoint(Constants.MIN_ARM);
+      } else if (newSetpoint > Constants.MAX_ARM) {
+         arm_PID.setSetpoint(Constants.MAX_ARM);
+      } else {
+         arm_PID.setSetpoint(newSetpoint);
+      }
    }
    
    //DOCUMENT
@@ -169,7 +183,14 @@ public class Arm extends Subsystem {
    
    //DOCUMENT
    public void incrementLinearSlide(double amount) {
-      linearSlide_PID.setSetpoint(amount + linearSlide_PID.getSetpoint());
+      double newSetpoint = linearSlide_PID.getSetpoint() + amount;
+      if (newSetpoint < Constants.MIN_LINEAR_SLIDE) {
+         linearSlide_PID.setSetpoint(Constants.MIN_LINEAR_SLIDE);
+      } else if (newSetpoint > Constants.MAX_LINEAR_SLIDE) {
+         linearSlide_PID.setSetpoint(Constants.MAX_LINEAR_SLIDE);
+      } else {
+         linearSlide_PID.setSetpoint(newSetpoint);
+      }
    }
     
    //DOCUMENT

@@ -22,17 +22,17 @@ public class Constants {
    public static final PIDCoefficients visionPID = new PIDCoefficients(0, 0, 0);
    
    // arm constants
-   public static final PIDCoefficients armPID = new PIDCoefficients(0.007, 0.0001, 0.01);
-   public static final PIDCoefficients tablePID = new PIDCoefficients(0.005, 0, 0.001);
+   public static final PIDCoefficients armPID = new PIDCoefficients(0.02, 0.0001, 0.01);
+   public static final PIDCoefficients tablePID = new PIDCoefficients(0.01, 0, 0.01);
    public static final PIDCoefficients linearSlidePID = new PIDCoefficients(0.03, 0, 0.001);
 
    public static final double linearSlideDiameter = 3; // diameter of linear slide spool thingy, in inches
-   public static final double armHeight[] = {10, 30, 60, 75}; // in degrees, from -1 to 3
+   public static final double armHeight[] = {5, 10, 30, 50}; // in degrees, from -1 to 3
    
    public static final double MAX_ARM = 90;
    public static final double MIN_ARM = -10;
-   public static final double MAX_TURNTABLE = 270;
-   public static final double MIN_TURNTABLE = -270;
-   public static final double MAX_LINEAR_SLIDE = -11;
-   public static final double MIN_LINEAR_SLIDE = 5;
+   public static final double MAX_TURNTABLE = 100;
+   public static final double MIN_TURNTABLE = -100;
+   public static final double MAX_LINEAR_SLIDE = 0;
+   public static final double MIN_LINEAR_SLIDE = -14;
 }
