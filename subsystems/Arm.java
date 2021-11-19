@@ -95,6 +95,12 @@ public class Arm extends Subsystem {
       
       intake1.setPower(0);
       intake2.setPower(0);
+
+      arm.resetDeviceConfigurationForOpMode();
+      turntable.resetDeviceConfigurationForOpMode();
+      linearSlide.resetDeviceConfigurationForOpMode();
+      intake1.resetDeviceConfigurationForOpMode();
+      intake2.resetDeviceConfigurationForOpMode();
    }
    
    /**
@@ -245,9 +251,26 @@ public class Arm extends Subsystem {
     */
     @Override
    public void periodic() {
-      turntable.setPower(turntable_PID.calculate(getTurntableAngle()));
-      arm.setPower(arm_PID.calculate(getArmAngle()));
-      linearSlide.setPower(linearSlide_PID.calculate(getLinearSlideDistance()));
+      if (linearSlide.getCurrent(CurrentUnit.AMPS) > Constants.LINEAR_SLIDE_MAX_CURRENT) {
+         linearSlide.setPower(0);
+      } else {
+         linearSlide.setPower(linearSlide_PID.calculate(getLinearSlideDistance()));
+         //linearSlide.setMotorDisable();
+      }
+
+      if (turntable.getCurrent(CurrentUnit.AMPS) > Constants.TURNTABLE_MAX_CURRENT) {
+         turntable.setPower(0);
+         //turntable.setMotorDisable();
+      } else {
+         turntable.setPower(turntable_PID.calculate(getTurntableAngle()));
+      }
+
+      if (arm.getCurrent(CurrentUnit.AMPS) > Constants.ARM_MAX_CURRENT) {
+         arm.setPower(0);
+         //arm.setMotorDisable();
+      } else {
+         arm.setPower(arm_PID.calculate(getArmAngle()));
+      }
       
       telemetry.addData("arm reading", getArmAngle());
       telemetry.addData("turntable reading", getTurntableAngle());

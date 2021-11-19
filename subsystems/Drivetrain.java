@@ -94,6 +94,11 @@ public class Drivetrain extends Subsystem {
       leftBack.setPower(0);
       rightFront.setPower(0);
       rightBack.setPower(0);
+
+      leftFront.resetDeviceConfigurationForOpMode();
+      leftBack.resetDeviceConfigurationForOpMode();
+      rightFront.resetDeviceConfigurationForOpMode();
+      rightBack.resetDeviceConfigurationForOpMode();
       // idk what else
       //TODO make this like zero all the sensors and calibrate and stuff
    }
@@ -111,7 +116,6 @@ public class Drivetrain extends Subsystem {
    }
    
    //DOCUMENT
-   //TODO make actually work
    public void arcadeDrive(double power, double turn) {
       leftFront.setPower(power - turn);
       leftBack.setPower(power - turn);
@@ -119,10 +123,11 @@ public class Drivetrain extends Subsystem {
       rightBack.setPower(power + turn);
    }
    
-   // ???
+   //DOCUMENT
    public void prepareTurn() {
       resetGyros();
       turnPID.reset();
+      //TODO fix so turns are relative and not absolute
    }
    
    //DOCUMENT
@@ -142,7 +147,7 @@ public class Drivetrain extends Subsystem {
       arcadeDrive(0, turnPID.calculate(getHeading()));
    }
    
-   //TODO make this use inches and stuff
+   //DOCUMENT
    public void driveDistance(double distance) {
       distancePID.setSetpoint(distance);
       double power = distancePID.calculate(getAverageDistance());
@@ -177,7 +182,6 @@ public class Drivetrain extends Subsystem {
    public double getHeading() {
       //TODO fuse this and make it more accurate
       //TODO use the other IMU as well
-      //TODO make sure this is actually correct and we don't need AxesReference.EXTRINSIC or anything
       //TODO correct for placement of hub on robot and center of rotation and all that
       return imu2.getAngularOrientation(AxesReference.EXTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES).thirdAngle + 180;
    };
@@ -233,15 +237,12 @@ public class Drivetrain extends Subsystem {
     */
    public void resetGyros() {
       //TODO make turning logic and math stuff work
-      //imu1.reset();
-      //imu2.reset();
       headingPID.setSetpoint(getHeading());
-      //???
+      //imu2.resetDeviceConfigurationForOpMode();
    };
    
    @Override
    public void periodic() {
-      //TODO telemetry stuff here
       telemetry.addData("drivetrain distance", getAverageDistance());
       telemetry.addData("left distance", getLeftDistance());
       telemetry.addData("right distance", getRightDistance());
