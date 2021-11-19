@@ -232,6 +232,7 @@ public class Arm extends Subsystem {
       return linearSlide.getCurrentPosition() / Constants.TICKS_PER_REV * Constants.linearSlideDiameter * Math.PI;
    }
    
+   //DOCUMENT
    public void resetEncoders() {
       turntable.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
       arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);

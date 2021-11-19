@@ -120,6 +120,7 @@ public class Vision extends Subsystem {
             }
     
             @Override
+            //DOCUMENT
             public Mat processFrame(Mat input)
             {
                 Imgproc.cvtColor(input, processed, Imgproc.COLOR_BGR2HSV);

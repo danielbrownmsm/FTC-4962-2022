@@ -4,6 +4,7 @@ import org.firstinspires.ftc.teamcode.commandframework.Command;
 import org.firstinspires.ftc.teamcode.subsystems.Drivetrain;
 import org.firstinspires.ftc.teamcode.subsystems.Vision;
 
+//DOCUMENT
 public class WaitCommand extends Command {
    private double millis;
    private double startTime;

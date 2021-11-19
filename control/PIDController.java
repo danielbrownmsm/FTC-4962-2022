@@ -2,7 +2,7 @@ package org.firstinspires.ftc.teamcode.control;
 
 import com.qualcomm.robotcore.hardware.PIDCoefficients;
 
-
+//DOCUMENT
 public class PIDController {
     private double getMillis() {
         return System.nanoTime() / 1e6;
@@ -29,18 +29,22 @@ public class PIDController {
     
     private boolean hasRun = false; // so we don't immediately return true
     
+    //DOCUMENT
     public PIDController(double kP, double kI, double kD) {
         this(kP, kI, kD, 0, 0, false);
     }
     
+    //DOCUMENT
     public PIDController(PIDCoefficients coeffs) {
         this(coeffs.p, coeffs.i, coeffs.d, 0, 0, false);
     }
     
+    //DOCUMENT
     public PIDController(PIDCoefficients coeffs, double minInput, double maxInput, boolean continuous) {
         this(coeffs.p, coeffs.i, coeffs.d, minInput, maxInput, continuous);
     }
     
+    //DOCUMENT
     public PIDController(double kP, double kI, double kD, double minInput, double maxInput, boolean continuous) {
         this.kP = kP;
         this.kI = kI;
@@ -51,6 +55,7 @@ public class PIDController {
         this.maxInput = maxInput;
     }
     
+    //DOCUMENT
     public double inputModulus(double input) {
         double modulus = maxInput - minInput;
         
@@ -63,15 +68,18 @@ public class PIDController {
         return input;
     }
 
+    //DOCUMENT
     public void setSetpoint(double setpoint) {
         this.setpoint = setpoint;
     }
 
+    //DOCUMENT
     public double calculate(double measurement, double setpoint) {
         setSetpoint(setpoint);
         return calculate(measurement);
     }
 
+    //DOCUMENT
     public double calculate(double measurement) {
         hasRun = true;
         if (continuous) {
@@ -91,11 +99,13 @@ public class PIDController {
         return output;
     }
     
+    //DOCUMENT
     public void setTolerance(double tolerance, double velocityTolerance) {
         this.tolerance = tolerance;
         this.velocityTolerance = velocityTolerance;
     }
 
+    //DOCUMENT
     public void reset() {
         error = 0;
         lastError = 0;
@@ -105,14 +115,17 @@ public class PIDController {
         hasRun = false;
     }
     
+    //DOCUMENT
     public double getError() {
         return error;
     }
     
+    //DOCUMENT
     public double getSetpoint() {
         return setpoint;
     }
 
+    //DOCUMENT
     public boolean atSetpoint() {
         if (hasRun) {
             return Math.abs(error) < tolerance && Math.abs(velocityError) < velocityTolerance;

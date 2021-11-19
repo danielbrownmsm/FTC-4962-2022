@@ -4,6 +4,7 @@ import org.firstinspires.ftc.teamcode.subsystems.Arm;
 import org.firstinspires.ftc.teamcode.commandframework.Command;
 import org.firstinspires.ftc.teamcode.Constants;
 
+//DOCUMENT
 public class ArmPresetCommand extends Command {
    private final Arm arm;
    private int level;

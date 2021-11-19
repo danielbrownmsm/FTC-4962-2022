@@ -11,6 +11,7 @@ public class VisionAlignCommand extends Command {
    private final Drivetrain drivetrain;
    private final Vision vision;
    
+   //DOCUMENT
    public VisionAlignCommand(Drivetrain drivetrain, Vision vision) {
       this.drivetrain = drivetrain;
       this.vision = vision;

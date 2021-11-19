@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.commands;
 import org.firstinspires.ftc.teamcode.subsystems.Wheel;
 import org.firstinspires.ftc.teamcode.commandframework.Command;
 
+//DOCUMENT
 public class SetWheelCommand extends Command {
    private final Wheel wheel;
    private double power;

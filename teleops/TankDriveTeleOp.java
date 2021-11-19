@@ -8,28 +8,24 @@ import org.firstinspires.ftc.teamcode.commands.*;
 
 @TeleOp(name="Just Tank-drive TeleOp", group="noncomp")
 public class TankDriveTeleOp extends OpMode {
-   private Drivetrain drivetrain = new Drivetrain(telemetry, hardwareMap);
+   private Drivetrain drivetrain; = new Drivetrain(telemetry, hardwareMap);
    
-   //private JoystickButton xButton = new JoystickButton(gamepad1);
-   private DriveCommand driveTeleOp = new DriveCommand(drivetrain, gamepad1);
+   private DriveCommand driveTeleOp; = new DriveCommand(drivetrain, gamepad1);
    
    @Override
    public void init() {
-      //xButton.whenPressed(); // ???
-      CommandScheduler.getInstance().schedule(driveTeleOp);
-   }
-   
-   @Override
-   public void init_loop() {
+      CommandScheduler2.init(telemetry);
+
+      drivetrain = new Drivetrain(telemetry, hardwareMap);
+      driveTeleOp = new DriveCommand(drivetrain, gamepad1);
+
+      drivetrain.init();
+
+      CommandScheduler2.schedule(driveTeleOp);
    }
    
    @Override
    public void loop() {
-      CommandScheduler.getInstance().loop();
-   }
-   
-   @Override
-   public void stop() {
-      
+      CommandScheduler2.loop();
    }
 }
