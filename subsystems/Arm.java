@@ -77,8 +77,14 @@ public class Arm extends Subsystem {
       resetEncoders();
    }
    
+   //DOCUMENT
    public void init() {
-      //DOCUMENT
+      arm.resetDeviceConfigurationForOpMode();
+      turntable.resetDeviceConfigurationForOpMode();
+      linearSlide.resetDeviceConfigurationForOpMode();
+      intake1.resetDeviceConfigurationForOpMode();
+      intake2.resetDeviceConfigurationForOpMode();
+      
       turntable_PID.reset();
       arm_PID.reset();
       linearSlide_PID.reset();
@@ -95,12 +101,6 @@ public class Arm extends Subsystem {
       
       intake1.setPower(0);
       intake2.setPower(0);
-
-      arm.resetDeviceConfigurationForOpMode();
-      turntable.resetDeviceConfigurationForOpMode();
-      linearSlide.resetDeviceConfigurationForOpMode();
-      intake1.resetDeviceConfigurationForOpMode();
-      intake2.resetDeviceConfigurationForOpMode();
    }
    
    /**

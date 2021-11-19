@@ -84,6 +84,11 @@ public class Drivetrain extends Subsystem {
    
    // DOCUMENT
    public void init() {
+      leftFront.resetDeviceConfigurationForOpMode();
+      leftBack.resetDeviceConfigurationForOpMode();
+      rightFront.resetDeviceConfigurationForOpMode();
+      rightBack.resetDeviceConfigurationForOpMode();
+
       resetGyros();
       resetEncoders();
       distancePID.reset();
@@ -94,13 +99,6 @@ public class Drivetrain extends Subsystem {
       leftBack.setPower(0);
       rightFront.setPower(0);
       rightBack.setPower(0);
-
-      leftFront.resetDeviceConfigurationForOpMode();
-      leftBack.resetDeviceConfigurationForOpMode();
-      rightFront.resetDeviceConfigurationForOpMode();
-      rightBack.resetDeviceConfigurationForOpMode();
-      // idk what else
-      //TODO make this like zero all the sensors and calibrate and stuff
    }
    
    /**
