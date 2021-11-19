@@ -2,24 +2,33 @@ package org.firstinspires.ftc.teamcode.commandframework;
 
 import com.qualcomm.robotcore.hardware.Gamepad;
 
-
+/**
+ * This class is pretty much stolen completely from WPILib/FTCLib
+ * modified, but mostly stolen
+ */
 public class ButtonR {
     private ButtonType buttonType;
     private Gamepad gamepad;
     
+    // all the different types of buttons we can bind to
     public enum ButtonType {
         X, Y, A, B, DpadUp, DpadDown, DpadLeft, DpadRight, RightStick, LeftStick, RightBumper, LeftBumper, Start, Back
     }
     
+    /**
+     * Makes a new ButtonR (R for Rockettes because I thought there would be a name-collision but there's not)
+     * @param gamepad the gamepad instance the button is on
+     * @param buttonType which button on the gamepad this is
+     */
     public ButtonR(Gamepad gamepad, ButtonType buttonType) {
         this.gamepad = gamepad;
         this.buttonType = buttonType;
     }
     
-    public String toString() {
-        return gamepad.toString() + " " + buttonType.toString();
-    }
-    
+    /**
+     * runs the given command when this button is released
+     * @param command the command to run
+     */
     public void whenReleased(final Command command) {
         CommandScheduler2.addButton(new Runnable() {
             private boolean lastState = get();
@@ -36,6 +45,10 @@ public class ButtonR {
         });
     }
     
+    /**
+     * continually schedules the given command until the button is released
+     * @param command the command to run
+     */
     public void whileHeld(final Command command) {
         CommandScheduler2.addButton(new Runnable() {
             private boolean lastState = get();
@@ -54,6 +67,10 @@ public class ButtonR {
         });
     }
     
+    /**
+     * runs the given command when this button is pressed
+     * @param command the command to run
+     */
     public void whenPressed(final Command command) {
         CommandScheduler2.addButton(new Runnable() {
             private boolean lastState = get();
@@ -70,7 +87,10 @@ public class ButtonR {
         });
     }
     
-    public boolean get() {
+    /**
+     * For inteneral use. Gets the state of this button from the gamepad instance.
+     */
+    protected boolean get() {
         switch(buttonType) {
             case A:
                 return gamepad.a;

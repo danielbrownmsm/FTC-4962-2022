@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.commandframework;
 
-/** A class that represents a subsytem.
+/** 
+ * A class that represents a subsytem.
  * Pretty much only here so we can call periodic()
  */
 public class Subsystem {

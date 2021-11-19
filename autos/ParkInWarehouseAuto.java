@@ -12,7 +12,6 @@ import org.firstinspires.ftc.teamcode.commands.*;
 public class ParkInWarehouseAuto extends LinearOpMode {
    private Drivetrain drivetrain;
    private Arm arm;
-   private Vision vision;
    
    private Command autoCommand;
 
@@ -24,20 +23,17 @@ public class ParkInWarehouseAuto extends LinearOpMode {
       // create our subsystems
       drivetrain = new Drivetrain(telemetry, hardwareMap);
       arm = new Arm(telemetry, hardwareMap);
-      vision = new Vision(telemetry, hardwareMap);
-
+      
       // initiallize all the subsystems
       drivetrain.init();
       arm.init();
-      vision.init();
-
+      
       // the autonomous command      
       autoCommand = new SequentialCommand(
-         new SetArmCommand(arm, 20), // raise the arm off the ground a bit so we don't run over it
-         new DriveDistance(drivetrain, 26) //TODO actually use the right distance
+         new SetArmCommand(arm, 15), // raise the arm off the ground a bit so we don't run over it
+         new DriveDistance(drivetrain, 26) // drive into the warehouse (completely into)
       );
-      //autoCommand = new DriveDistance(drivetrain, 26);
-      telemetry.addData("autoCommand", autoCommand);
+      telemetry.addData("auton command", autoCommand);
       
       // schedule the auto command
       CommandScheduler2.schedule(autoCommand);
@@ -55,9 +51,8 @@ public class ParkInWarehouseAuto extends LinearOpMode {
          telemetry.addData("state", "executing. . .");
          telemetry.update();
          //sleep(5); // sleep a bit??? idk
-         //sleep(10000);
       } while (!isStopRequested() && !autoCommand.isFinished());
       
-      sleep(100);
+      sleep(100); // sleep a bit so we're not yeeted out too quickly
    }
 }

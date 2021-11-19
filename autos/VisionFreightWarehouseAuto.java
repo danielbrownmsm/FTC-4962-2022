@@ -18,51 +18,38 @@ public class VisionFreightWarehouseAuto extends LinearOpMode {
 
    @Override
    public void runOpMode() {
-       CommandScheduler2.init(telemetry);
+      CommandScheduler2.init(telemetry);
+      
       // create our subsystems
       drivetrain = new Drivetrain(telemetry, hardwareMap);
       arm = new Arm(telemetry, hardwareMap);
       vision = new Vision(telemetry, hardwareMap);
 
-      // the autonomous command
-      /**
-       * use vision to store the correct height placement thingy
-       * drive to the wobble thing
-       * raise the arm to the correct height
-       * extend the linear slide
-       * outake the preloaded cube
-       * ???move linear slide back in???
-       * drive back
-       * turn to the warehouse
-       * drive into the warehouse
-       */
-        //TODO maybe make some of these ParallelCommands so we don't take up too much time in auto
-      autoCommand = new SequentialCommand(
-        //new VisionStoreLevel(vision),
-        new WaitCommand(3000), // wait 3 seconds
-        new VisionRaiseArm(arm, vision),
-        new DriveDistance(drivetrain, 5), //TODO use correct distance 
-        new SetLinearSlide(arm, 6), //TODO use correct distance
-        new IntakeCommand(arm, -1) //TODO this needs to have a timeout or something so it can last a while
-        /*// or maybe have a WaitCommand() ???
-        new SetLinearSlide(arm, 0), //TODO use correct distance
-        new DriveDistance(drivetrain, -1), //TODO use correct distance
-        new TurnHeadingCommand(drivetrain, 90), //TODO use correct angle
-        new DriveDistance(drivetrain, 12) //TODO actually use the right distance*/
-      );
-      
       // initiallize all the subsystems
       drivetrain.init();
       arm.init();
       vision.init();
 
+      // the autonomous command
+      //TODO maybe make some of these ParallelCommands so we don't take up too much time in auto
+      autoCommand = new SequentialCommand(
+        new WaitCommand(3000), // wait 3 seconds (for the camera to get its lock and everything)
+        new VisionRaiseArm(arm, vision), // raise the arm to the correct height
+        new DriveDistance(drivetrain, 5), //TODO use correct distance 
+        new SetLinearSlide(arm, 6), //TODO use correct distance
+        new IntakeCommand(arm, -1), // deposit the freight
+        new WaitCommand(2000), // wait for the freight to fall out
+        new IntakeCommand(arm, 0), // stop the intake servos
+        new SetLinearSlide(arm, 0)/*, // bring the slide back in
+        new DriveDistance(drivetrain, -1), // back up TODO use correct distance
+        new TurnHeadingCommand(drivetrain, 90), // turn towards the warehouse TODO use correct angle
+        new DriveDistance(drivetrain, 12) // drive into the warehouse and parkTODO actually use the right distance*/
+      );
+
       // schedule the auto command
       CommandScheduler2.schedule(autoCommand);
-      
+      telemetry.addData("state", "waiting for start");
       waitForStart();
-
-      //TODO actually make and work and test and stuff
-      //arm.setOutOfTheWay(); // raise the arm up a bit so that we don't run over it
 
       // loop until we are finished or we must finish
       while (!autoCommand.isFinished() && !isStopRequested()) {

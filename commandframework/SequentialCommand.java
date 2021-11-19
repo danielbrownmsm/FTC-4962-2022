@@ -2,10 +2,18 @@ package org.firstinspires.ftc.teamcode.commandframework;
 
 import java.util.ArrayList;
 
+/**
+ * A SequentialCommand class, made for when you want multiple
+ * commands to execute in sequence, for instance in auto
+ */
 public class SequentialCommand extends Command {
    private ArrayList<Command> commands = new ArrayList<>();
    private int index = 0;
    
+   /**
+    * Makes a new SequentialCommand
+    * @param commands an arbitrarily large list of command instances, in order
+    */
    public SequentialCommand(Command... commands) {
       for (Command command : commands) {
          this.commands.add(command);
