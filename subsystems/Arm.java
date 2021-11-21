@@ -255,7 +255,11 @@ public class Arm extends Subsystem {
       if (linearSlide.getCurrent(CurrentUnit.AMPS) > Constants.LINEAR_SLIDE_MAX_CURRENT) {
          linearSlide.setPower(0);
       } else {
-         linearSlide.setPower(linearSlide_PID.calculate(getLinearSlideDistance()));
+         double linearSlideOutput = linearSlide_PID.calculate(getLinearSlideDistance());
+         telemetry.addData("linear slide output", linearSlideOutput);
+         if (Math.abs(linearSlideOutput) > Constants.minLinearSlideOutput) {
+            linearSlide.setPower(linearSlideOutput);
+         }
          //linearSlide.setMotorDisable();
       }
 
@@ -263,14 +267,20 @@ public class Arm extends Subsystem {
          turntable.setPower(0);
          //turntable.setMotorDisable();
       } else {
-         turntable.setPower(turntable_PID.calculate(getTurntableAngle()));
+         double turntableOutput = turntable_PID.calculate(getTurntableAngle());
+         telemetry.addData("turntable output", turntableOutput);
+         turntable.setPower(turntableOutput);
       }
 
       if (arm.getCurrent(CurrentUnit.AMPS) > Constants.ARM_MAX_CURRENT) {
          arm.setPower(0);
          //arm.setMotorDisable();
       } else {
-         arm.setPower(arm_PID.calculate(getArmAngle()));
+         double armOutput = arm_PID.calculate(getArmAngle());
+         telemetry.addData("arm output", armOutput);
+         if (Math.abs(armOutput) > Constants.minArmOutput) {
+            arm.setPower(armOutput);
+         }
       }
       
       telemetry.addData("arm reading", getArmAngle());

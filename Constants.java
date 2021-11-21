@@ -39,4 +39,7 @@ public class Constants {
    public static final double LINEAR_SLIDE_MAX_CURRENT = 2;
    public static final double TURNTABLE_MAX_CURRENT = 2;
    public static final double ARM_MAX_CURRENT = 2;
+   public static final double minLinearSlideOutput = 1;
+   public static final double minTurntableOutput = 1;
+   public static final double minArmOutput = 1;
 }
