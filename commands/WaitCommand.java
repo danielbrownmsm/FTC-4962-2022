@@ -22,3 +22,4 @@ public class WaitCommand extends Command {
    public boolean isFinished() {
       return (System.nanoTime()/1e6 - startTime) > millis;
    }
+}

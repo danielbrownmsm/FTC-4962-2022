@@ -2,15 +2,15 @@ package org.firstinspires.ftc.teamcode.teleops;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import org.firstinspires.ftc.teamcode.commandframework.CommandScheduler;
+import org.firstinspires.ftc.teamcode.commandframework.CommandScheduler2;
 import org.firstinspires.ftc.teamcode.subsystems.Drivetrain;
 import org.firstinspires.ftc.teamcode.commands.*;
 
 @TeleOp(name="Just Tank-drive TeleOp", group="noncomp")
 public class TankDriveTeleOp extends OpMode {
-   private Drivetrain drivetrain; = new Drivetrain(telemetry, hardwareMap);
+   private Drivetrain drivetrain = new Drivetrain(telemetry, hardwareMap);
    
-   private DriveCommand driveTeleOp; = new DriveCommand(drivetrain, gamepad1);
+   private DriveCommand driveTeleOp = new DriveCommand(drivetrain, gamepad1);
    
    @Override
    public void init() {

@@ -28,12 +28,21 @@ public class VisionRaiseArm extends Command {
    
    @Override
    public void execute() {
-      // set the arm to the correct height based off of what vision says we need to go to and the arm-height constants
-      arm.setArm(Constants.armHeight[vision.getTargetAutoLevel()]);
+      if (vision.getTargetAutoLevel() > -1) {
+         // set the arm to the correct height based off of what vision says we need to go to and the arm-height constants
+         arm.setArm(Constants.armHeight[vision.getTargetAutoLevel()]);
+      } else {
+         
+      }
+   }
+   
+   @Override
+   public void end(boolean interrupted) {
+      vision.stopPipeline();
    }
    
    @Override
    public boolean isFinished() {
-      return arm.armAtSetpoint();
+      return arm.armAtSetpoint() && vision.getTargetAutoLevel() > -1;
    }
 }

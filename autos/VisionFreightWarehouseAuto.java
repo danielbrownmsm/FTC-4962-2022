@@ -13,6 +13,8 @@ public class VisionFreightWarehouseAuto extends LinearOpMode {
    private Drivetrain drivetrain;
    private Arm arm;
    private Vision vision;
+   private double lastTime = 0;
+   private double now = 0;
    
    private SequentialCommand autoCommand;
 
@@ -33,29 +35,43 @@ public class VisionFreightWarehouseAuto extends LinearOpMode {
       // the autonomous command
       //TODO maybe make some of these ParallelCommands so we don't take up too much time in auto
       autoCommand = new SequentialCommand(
-        new WaitCommand(3000), // wait 3 seconds (for the camera to get its lock and everything)
+        /*new WaitCommand(3000), // wait 3 seconds (for the camera to get its lock and everything)
         new VisionRaiseArm(arm, vision), // raise the arm to the correct height
-        new DriveDistance(drivetrain, 5), //TODO use correct distance 
-        new SetLinearSlide(arm, 6), //TODO use correct distance
-        new IntakeCommand(arm, -1), // deposit the freight
-        new WaitCommand(2000), // wait for the freight to fall out
+        new WaitCommand(500), // wait for like a second cause idk it's not working
+        new SetTurntableCommand(arm, 40),
+        new WaitCommand(1000),
+        new DriveDistance(drivetrain, -15.5), //TODO use correct distance
+        new WaitCommand(1000),
+        //new DriveCommand(drivetrain, 0, 0),
+        new SetLinearSlide(arm, 5), //TODO use correct distance
+        new WaitCommand(1000),
+        new IntakeCommand(arm, 1), // deposit the freight
+        new WaitCommand(1000), // wait for the freight to fall out
         new IntakeCommand(arm, 0), // stop the intake servos
-        new SetLinearSlide(arm, 0)/*, // bring the slide back in
-        new DriveDistance(drivetrain, -1), // back up TODO use correct distance
+        new SetLinearSlide(arm, 0.2), // bring the slide back in
+        new WaitCommand(1000),*/
+        //new DriveDistance(drivetrain, -1), // back up TODO use correct distance
         new TurnHeadingCommand(drivetrain, 90), // turn towards the warehouse TODO use correct angle
-        new DriveDistance(drivetrain, 12) // drive into the warehouse and parkTODO actually use the right distance*/
+        new WaitCommand(1000)
+        //new DriveDistance(drivetrain, 50) // drive into the warehouse and parkTODO actually use the right distance*/
       );
 
       // schedule the auto command
       CommandScheduler2.schedule(autoCommand);
       telemetry.addData("state", "waiting for start");
+      telemetry.update();
       waitForStart();
 
       // loop until we are finished or we must finish
       while (!autoCommand.isFinished() && !isStopRequested()) {
+         now = System.nanoTime() / 1e6;
+         telemetry.addData("loop time", now - lastTime);
+         lastTime = now;
+         
          // run the command scheduler (ie the auto command, as well as all the periodic()s)
          CommandScheduler2.loop();
-         sleep(5); // sleep a bit??? idk
+         telemetry.update();
+         //sleep(5); // sleep a bit??? idk
       }
    }
 }

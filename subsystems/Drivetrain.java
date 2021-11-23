@@ -74,20 +74,20 @@ public class Drivetrain extends Subsystem {
       imu2.initialize(parameters);
       
       distancePID = new PIDController(Constants.distancePID);
-      headingPID = new PIDController(Constants.headingPID, 0, 360, true);
+      headingPID = new PIDController(Constants.headingPID, -180, 180, true);
       turnPID = new PIDController(Constants.turnPID, -180, 180, true);
 
-      distancePID.setTolerance(0.5, 0.125);
+      distancePID.setTolerance(0.75, 0.001);
       headingPID.setTolerance(3, 0.125);
-      turnPID.setTolerance(1, 0.125);
+      turnPID.setTolerance(10, 10);
    }
    
    // DOCUMENT
    public void init() {
-      leftFront.resetDeviceConfigurationForOpMode();
-      leftBack.resetDeviceConfigurationForOpMode();
-      rightFront.resetDeviceConfigurationForOpMode();
-      rightBack.resetDeviceConfigurationForOpMode();
+      //leftFront.resetDeviceConfigurationForOpMode();
+      //leftBack.resetDeviceConfigurationForOpMode();
+      //rightFront.resetDeviceConfigurationForOpMode();
+      //rightBack.resetDeviceConfigurationForOpMode();
 
       resetGyros();
       resetEncoders();
@@ -141,8 +141,21 @@ public class Drivetrain extends Subsystem {
    public void turnToHeading(double angle) {
       turnPID.setSetpoint(angle);
       telemetry.addData("turn setpoint", turnPID.getSetpoint());
-      telemetry.addData("output", turnPID.calculate(getHeading()));
+      telemetry.addData("turn output", turnPID.calculate(getHeading()));
       arcadeDrive(0, turnPID.calculate(getHeading()));
+   }
+   
+   public boolean simpleTurnToHeading(double angle) {
+      telemetry.addData("turn setpoint", angle);
+      telemetry.addData("turn output", (angle - getHeading()) * 0.005);
+      
+      arcadeDrive(0, (angle - getHeading()) * 0.005);
+      
+      if (Math.abs(angle - getHeading()) < 10) {
+         arcadeDrive(0, 0);
+         return true;
+      }
+      return false;
    }
    
    //DOCUMENT
@@ -181,7 +194,7 @@ public class Drivetrain extends Subsystem {
       //TODO fuse this and make it more accurate
       //TODO use the other IMU as well
       //TODO correct for placement of hub on robot and center of rotation and all that
-      return imu2.getAngularOrientation(AxesReference.EXTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES).thirdAngle + 180;
+      return imu2.getAngularOrientation(AxesReference.EXTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES).thirdAngle;
    };
    
    /**

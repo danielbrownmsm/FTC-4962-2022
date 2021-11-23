@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.hardware.CRServoImplEx;
+import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 
 import org.firstinspires.ftc.teamcode.control.PIDController;
 import org.firstinspires.ftc.teamcode.Constants;
@@ -60,6 +61,8 @@ public class Arm extends Subsystem {
       arm = map.get(DcMotorImplEx.class, "arm");
       linearSlide = map.get(DcMotorImplEx.class, "linearSlide");
       
+      linearSlide.setDirection(DcMotor.Direction.FORWARD);
+      
       intake1 = map.get(CRServoImplEx.class, "intake1");
       intake2 = map.get(CRServoImplEx.class, "intake2");
       
@@ -72,18 +75,18 @@ public class Arm extends Subsystem {
       
       turntable_PID.setTolerance(3, 1);
       arm_PID.setTolerance(3, 1);
-      linearSlide_PID.setTolerance(0.5, 1);
+      linearSlide_PID.setTolerance(0.75, 1);
 
       resetEncoders();
    }
    
    //DOCUMENT
    public void init() {
-      arm.resetDeviceConfigurationForOpMode();
-      turntable.resetDeviceConfigurationForOpMode();
-      linearSlide.resetDeviceConfigurationForOpMode();
-      intake1.resetDeviceConfigurationForOpMode();
-      intake2.resetDeviceConfigurationForOpMode();
+      //arm.resetDeviceConfigurationForOpMode();
+      //turntable.resetDeviceConfigurationForOpMode();
+      //linearSlide.resetDeviceConfigurationForOpMode();
+      //intake1.resetDeviceConfigurationForOpMode();
+      //intake2.resetDeviceConfigurationForOpMode();
       
       turntable_PID.reset();
       arm_PID.reset();
@@ -146,12 +149,12 @@ public class Arm extends Subsystem {
          angle = Constants.MIN_ARM;
       } else if (angle > Constants.MAX_ARM) {
          angle = Constants.MAX_ARM;
+      } else {
+         arm_PID.setSetpoint(angle);
       }
-
-      arm_PID.setSetpoint(angle);
       
       //TEMP
-      arm.setPower(arm_PID.calculate(getArmAngle()));
+      //arm.setPower(arm_PID.calculate(getArmAngle()));
    }
    
    //DOCUMENT
@@ -181,10 +184,10 @@ public class Arm extends Subsystem {
          dist = Constants.MAX_LINEAR_SLIDE;
       } else if (dist < Constants.MIN_LINEAR_SLIDE) {
          dist = Constants.MIN_LINEAR_SLIDE;
+      } else {
+         linearSlide_PID.setSetpoint(dist);
       }
 
-      //TODO can we even have/do we even need this kind of functionality? Maybe just make it a boolean thing?
-      linearSlide_PID.setSetpoint(dist);
    }
    
    //DOCUMENT
@@ -228,8 +231,8 @@ public class Arm extends Subsystem {
 
    //DOCUMENT
    public double getLinearSlideDistance() {
-      // degrees
-      return linearSlide.getCurrentPosition() / Constants.TICKS_PER_REV * Constants.linearSlideDiameter * Math.PI;
+      // inches
+      return -linearSlide.getCurrentPosition() / Constants.TICKS_PER_REV * Constants.linearSlideDiameter * Math.PI;
    }
    
    //DOCUMENT
@@ -252,36 +255,36 @@ public class Arm extends Subsystem {
     */
     @Override
    public void periodic() {
-      if (linearSlide.getCurrent(CurrentUnit.AMPS) > Constants.LINEAR_SLIDE_MAX_CURRENT) {
-         linearSlide.setPower(0);
-      } else {
+      //if (linearSlide.getCurrent(CurrentUnit.AMPS) > Constants.LINEAR_SLIDE_MAX_CURRENT) {
+      //   linearSlide.setPower(0);
+      //} else {
          double linearSlideOutput = linearSlide_PID.calculate(getLinearSlideDistance());
          telemetry.addData("linear slide output", linearSlideOutput);
-         if (Math.abs(linearSlideOutput) > Constants.minLinearSlideOutput) {
+         //if (Math.abs(linearSlideOutput) > Constants.minLinearSlideOutput) {
             linearSlide.setPower(linearSlideOutput);
-         }
+         //}
          //linearSlide.setMotorDisable();
-      }
+      //}
 
-      if (turntable.getCurrent(CurrentUnit.AMPS) > Constants.TURNTABLE_MAX_CURRENT) {
-         turntable.setPower(0);
+      //if (turntable.getCurrent(CurrentUnit.AMPS) > Constants.TURNTABLE_MAX_CURRENT) {
+      //   turntable.setPower(0);
          //turntable.setMotorDisable();
-      } else {
+      //} else {
          double turntableOutput = turntable_PID.calculate(getTurntableAngle());
          telemetry.addData("turntable output", turntableOutput);
          turntable.setPower(turntableOutput);
-      }
+      //}
 
-      if (arm.getCurrent(CurrentUnit.AMPS) > Constants.ARM_MAX_CURRENT) {
-         arm.setPower(0);
+      //if (arm.getCurrent(CurrentUnit.AMPS) > Constants.ARM_MAX_CURRENT) {
+      //   arm.setPower(0);
          //arm.setMotorDisable();
-      } else {
+      //} else {
          double armOutput = arm_PID.calculate(getArmAngle());
          telemetry.addData("arm output", armOutput);
-         if (Math.abs(armOutput) > Constants.minArmOutput) {
+         //if (Math.abs(armOutput) > Constants.minArmOutput) {
             arm.setPower(armOutput);
-         }
-      }
+         //}
+      //}
       
       telemetry.addData("arm reading", getArmAngle());
       telemetry.addData("turntable reading", getTurntableAngle());

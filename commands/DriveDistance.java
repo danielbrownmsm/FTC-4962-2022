@@ -38,6 +38,6 @@ public class DriveDistance extends Command {
    @Override
    public boolean isFinished() {
       // finish if we have driven the distance
-      return drivetrain.atDistanceSetpoint() && drivetrain.atHeadingSetpoint() /*|| isTimedOut()*/;
+      return drivetrain.atDistanceSetpoint(); //&& drivetrain.atHeadingSetpoint() /*|| isTimedOut()*/;
    }
 }

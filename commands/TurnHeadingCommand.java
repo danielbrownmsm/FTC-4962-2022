@@ -11,6 +11,7 @@ import org.firstinspires.ftc.teamcode.subsystems.Drivetrain;
 public class TurnHeadingCommand extends Command {
    private final Drivetrain drivetrain;
    private double heading;
+   private boolean done = false;
    
    /**
     * Makes a new TurnHeadingCommand command
@@ -31,12 +32,14 @@ public class TurnHeadingCommand extends Command {
    
    @Override
    public void execute() {
-      drivetrain.turnToHeading(heading);
+      //drivetrain.turnToHeading(heading);
+      done = drivetrain.simpleTurnToHeading(heading);
    }
    
    @Override
    public boolean isFinished() {
       // we're done once we've reached the setpoint
-      return drivetrain.atHeadingSetpoint() /*|| isTimedOut()*/;
+      //return drivetrain.atHeadingSetpoint() /*|| isTimedOut()*/;
+      return done;
    }
 }

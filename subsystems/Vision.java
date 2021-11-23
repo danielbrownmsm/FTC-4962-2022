@@ -42,8 +42,9 @@ public class Vision extends Subsystem {
         public Vision(Telemetry telemetry, HardwareMap hardwareMap) {
                 this.telemetry = telemetry;
                 
+                int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
                 WebcamName webcamName = hardwareMap.get(WebcamName.class, "Webcam1");
-                camera = OpenCvCameraFactory.getInstance().createWebcam(webcamName);
+                camera = OpenCvCameraFactory.getInstance().createWebcam(webcamName, cameraMonitorViewId);
                 
                 vision_PID = new PIDController(Constants.visionPID);
 
@@ -55,7 +56,7 @@ public class Vision extends Subsystem {
           camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
             @Override
             public void onOpened() {
-                    camera.startStreaming(752, 416);
+                    camera.startStreaming(752, 416, OpenCvCameraRotation.UPRIGHT);
                     camera.setPipeline(hubLevelPipeline);
             }
         
@@ -93,8 +94,13 @@ public class Vision extends Subsystem {
                 return hubLevelPipeline.getTargetAutoLevel() > -1;
         }
         
+        public void stopPipeline() {
+            camera.stopStreaming();
+        }
+        
         @Override
         public void periodic() {
+            telemetry.addData("target hub level", getTargetAutoLevel());
                 // honestly we don't do much here. Everything's already called automatically with the pipeline and stuff
                 //TODO telemetry
         }
@@ -108,15 +114,25 @@ public class Vision extends Subsystem {
             List<MatOfPoint> contours = new ArrayList<>();
             Scalar LOWER = new Scalar(130, 110, 155);
             Scalar UPPER = new Scalar(140, 255, 255);
-            Scalar color = new Scalar(0, 255, 0);
+            
+            Scalar level1Color = new Scalar(0, 255, 0);
+            Scalar level2Color = new Scalar(255, 0, 0);
+            Scalar level3Color = new Scalar(0, 0, 255);
+            
             Mat kernel = new Mat();
             Size size = new Size(3, 3);
             double maxVal = 0;
             int maxValId = 0;
             int targetHubAutoLevel = -1;
+            int lastTargetHubAutoLevel = -1;
             
             public int getTargetAutoLevel() {
-                return targetHubAutoLevel;
+                // this logic so we don't flip between actual and -1 really quickly a whole bunch
+                if (targetHubAutoLevel > 0) {
+                    lastTargetHubAutoLevel = targetHubAutoLevel;
+                    return targetHubAutoLevel;
+                }
+                return lastTargetHubAutoLevel;
             }
     
             @Override
@@ -150,13 +166,15 @@ public class Vision extends Subsystem {
                 }
                 if (maxValId > 0 && contours.size() > 0 && maxValId < contours.size()) {
                     Rect largestRect = Imgproc.boundingRect(contours.get(maxValId));
-                    Imgproc.rectangle(processed, largestRect, color, 5);
                     
-                    if (largestRect.x > 530) {
+                    if (largestRect.x > 500) {
+                        Imgproc.rectangle(processed, largestRect, level3Color, 5);
                         targetHubAutoLevel = 3;
-                    } else if (400 < largestRect.x && largestRect.x < 530) {
+                    } else if (350 < largestRect.x && largestRect.x < 500) {
+                        Imgproc.rectangle(processed, largestRect, level2Color, 5);
                         targetHubAutoLevel = 2;
-                    } else if (100 < largestRect.x && largestRect.x < 300) {
+                    } else if (0 < largestRect.x && largestRect.x < 350) {
+                        Imgproc.rectangle(processed, largestRect, level1Color, 5);
                         targetHubAutoLevel = 1;
                     } else {
                         // set it to -1 here? but like flickering between -1 and actual?
