@@ -35,23 +35,23 @@ public class VisionFreightWarehouseAuto extends LinearOpMode {
       // the autonomous command
       //TODO maybe make some of these ParallelCommands so we don't take up too much time in auto
       autoCommand = new SequentialCommand(
-        /*new WaitCommand(3000), // wait 3 seconds (for the camera to get its lock and everything)
+        new WaitCommand(2500), // wait 3 seconds (for the camera to get its lock and everything)
         new VisionRaiseArm(arm, vision), // raise the arm to the correct height
         new WaitCommand(500), // wait for like a second cause idk it's not working
-        new SetTurntableCommand(arm, 40),
-        new WaitCommand(1000),
-        new DriveDistance(drivetrain, -15.5), //TODO use correct distance
-        new WaitCommand(1000),
+        new SetTurntableCommand(arm, 32),
+        new WaitCommand(500),
+        new DriveDistance(drivetrain, -16.5), //TODO use correct distance
+        new WaitCommand(500),
         //new DriveCommand(drivetrain, 0, 0),
         new SetLinearSlide(arm, 5), //TODO use correct distance
-        new WaitCommand(1000),
+        new WaitCommand(500),
         new IntakeCommand(arm, 1), // deposit the freight
         new WaitCommand(1000), // wait for the freight to fall out
         new IntakeCommand(arm, 0), // stop the intake servos
         new SetLinearSlide(arm, 0.2), // bring the slide back in
-        new WaitCommand(1000),*/
+        new WaitCommand(500),
         //new DriveDistance(drivetrain, -1), // back up TODO use correct distance
-        new TurnHeadingCommand(drivetrain, 90), // turn towards the warehouse TODO use correct angle
+        //new TurnHeadingCommand(drivetrain, 90), // turn towards the warehouse TODO use correct angle
         new WaitCommand(1000)
         //new DriveDistance(drivetrain, 50) // drive into the warehouse and parkTODO actually use the right distance*/
       );

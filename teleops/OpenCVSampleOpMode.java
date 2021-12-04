@@ -264,7 +264,7 @@ public class OpenCVSampleOpMode extends OpMode {
                 Rect rect = Imgproc.boundingRect(contours.get(contourIdx));
                 double area = rect.width * rect.height;
                 
-                if ((rect.height - rect.width * 1.2) < 50) {
+                if (rect.height > rect.width) {
                     //if (rect.y > 200) {
                         if (area > maxVal) {
                             maxVal = area;
@@ -281,7 +281,7 @@ public class OpenCVSampleOpMode extends OpMode {
                     targetHubAutoLevel = 3;
                 } else if (400 < largestRect.x && largestRect.x < 530) {
                     targetHubAutoLevel = 2;
-                } else if (100 < largestRect.x && largestRect.x < 300) {
+                } else if (100 < largestRect.x && largestRect.x < 350) {
                     targetHubAutoLevel = 1;
                 } else {
                     // set it to -1 here? but like flickering between -1 and actual?

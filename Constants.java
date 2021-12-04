@@ -17,7 +17,7 @@ public class Constants {
    public static final double INCHES_PER_REV = Math.PI * WHEEL_DIAMETER;
    
    public static final PIDCoefficients headingPID = new PIDCoefficients(0.0, 0, 0.05);
-   public static final PIDCoefficients distancePID = new PIDCoefficients(0.06, 0.001, 0.4);
+   public static final PIDCoefficients distancePID = new PIDCoefficients(0.12, 0, 0.4);
    public static final PIDCoefficients turnPID = new PIDCoefficients(0.003, 0, 0.5);
    public static final PIDCoefficients visionPID = new PIDCoefficients(0, 0, 0);
    
@@ -27,7 +27,7 @@ public class Constants {
    public static final PIDCoefficients linearSlidePID = new PIDCoefficients(0.07, 0.001, 0.3);
 
    public static final double linearSlideDiameter = 3; // diameter of linear slide spool thingy, in inches
-   public static final double armHeight[] = {15, 15, 30, 47}; // in degrees, from -1 to 3
+   public static final double armHeight[] = {15, 15, 27, 47}; // in degrees, from -1 to 3
    
    public static final double MAX_ARM = 90;
    public static final double MIN_ARM = -10;

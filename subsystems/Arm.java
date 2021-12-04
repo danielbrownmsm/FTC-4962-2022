@@ -114,11 +114,13 @@ public class Arm extends Subsystem {
     */
    public void rotateTurntable(double angle) {
       // a limit on angle so we don't kill our wires
-      if (Math.abs(angle) > Constants.MAX_TURNTABLE) {
-         angle = Constants.MAX_TURNTABLE;
-      }
-
-      turntable_PID.setSetpoint(angle);
+      // if (angle < Constants.MIN_TURNTABLE) {
+      //    turntable_PID.setSetpoint(Constants.MIN_TURNTABLE);
+      // } else if (angle > Constants.MAX_TURNTABLE) {
+      //    turntable_PID.setSetpoint(Constants.MAX_TURNTABLE);
+      // } else {
+         turntable_PID.setSetpoint(angle);
+      //}
    }
    
    //DOCUMENT

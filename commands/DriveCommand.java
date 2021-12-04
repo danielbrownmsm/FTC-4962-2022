@@ -25,6 +25,7 @@ public class DriveCommand extends Command {
    @Override
    public void execute() {
       // drives us tank-drive style, for tele-op
+      //drivetrain.arcadeDrive(gamepad.left_stick_y, gamepad.left_stick_x);
       drivetrain.driveTeleOp(gamepad.left_stick_y, gamepad.right_stick_y);
    }
    

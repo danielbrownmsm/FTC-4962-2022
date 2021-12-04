@@ -8,9 +8,8 @@ import org.firstinspires.ftc.teamcode.commands.*;
 
 @TeleOp(name="Just Tank-drive TeleOp", group="noncomp")
 public class TankDriveTeleOp extends OpMode {
-   private Drivetrain drivetrain = new Drivetrain(telemetry, hardwareMap);
-   
-   private DriveCommand driveTeleOp = new DriveCommand(drivetrain, gamepad1);
+   private Drivetrain drivetrain;
+   private DriveCommand driveTeleOp;
    
    @Override
    public void init() {

@@ -45,6 +45,8 @@ public class Drivetrain extends Subsystem {
    //Pure-pursuit? idk what to do man
    
    private Telemetry telemetry;
+   
+   private double lastAngle = 0;
 
    
    /**
@@ -125,6 +127,7 @@ public class Drivetrain extends Subsystem {
    public void prepareTurn() {
       resetGyros();
       turnPID.reset();
+      lastAngle = getHeading();
       //TODO fix so turns are relative and not absolute
    }
    
@@ -146,16 +149,44 @@ public class Drivetrain extends Subsystem {
    }
    
    public boolean simpleTurnToHeading(double angle) {
-      telemetry.addData("turn setpoint", angle);
-      telemetry.addData("turn output", (angle - getHeading()) * 0.005);
+      if (getHeading() > angle) {
+         arcadeDrive(0, 0.7);
+      } else if (getHeading() < angle) {
+         arcadeDrive(0, -0.7);
+      }
       
-      arcadeDrive(0, (angle - getHeading()) * 0.005);
-      
-      if (Math.abs(angle - getHeading()) < 10) {
-         arcadeDrive(0, 0);
+      if (Math.abs(getHeading() - angle) < 10) {
          return true;
       }
       return false;
+      //  double error = lastAngle + angle - 180 - getHeading();
+      //  if (Math.abs(error) < 10) {
+      //     return true;
+      //  }
+        
+      //  if (error < 0) {
+      //     arcadeDrive(0, 0.7);
+      //  } else {
+      //     arcadeDrive(0, -0.7);
+      //  }
+      //  return false;
+        
+      // telemetry.addData("turn setpoint", angle);
+      // telemetry.addData("turn output", (angle - getHeading()) * 0.005);
+      
+      // arcadeDrive(0, (angle - getHeading()) * 0.005);
+      
+      // if (Math.abs(angle - getHeading()) < 10) {
+      //    arcadeDrive(0, 0);
+      //    return true;
+      // }
+      // return false;
+      // if ((getHeading() - (angle /*+ lastAngle*/)) > 10) {
+      //    arcadeDrive(0, -0.7);
+      //    return false;
+      // } else {
+      //    return true;
+      // }
    }
    
    //DOCUMENT
