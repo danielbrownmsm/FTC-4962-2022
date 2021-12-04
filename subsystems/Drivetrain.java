@@ -69,6 +69,12 @@ public class Drivetrain extends Subsystem {
       leftFront.setDirection(DcMotorSimple.Direction.FORWARD);
       leftBack.setDirection(DcMotorSimple.Direction.FORWARD);
 
+      rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+      rightBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+      leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+      leftBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+
+
       //imu1 = map.get(BNO055IMU.class, "imu1");
       imu2 = map.get(BNO055IMU.class, "imu2");
       BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
@@ -159,34 +165,6 @@ public class Drivetrain extends Subsystem {
          return true;
       }
       return false;
-      //  double error = lastAngle + angle - 180 - getHeading();
-      //  if (Math.abs(error) < 10) {
-      //     return true;
-      //  }
-        
-      //  if (error < 0) {
-      //     arcadeDrive(0, 0.7);
-      //  } else {
-      //     arcadeDrive(0, -0.7);
-      //  }
-      //  return false;
-        
-      // telemetry.addData("turn setpoint", angle);
-      // telemetry.addData("turn output", (angle - getHeading()) * 0.005);
-      
-      // arcadeDrive(0, (angle - getHeading()) * 0.005);
-      
-      // if (Math.abs(angle - getHeading()) < 10) {
-      //    arcadeDrive(0, 0);
-      //    return true;
-      // }
-      // return false;
-      // if ((getHeading() - (angle /*+ lastAngle*/)) > 10) {
-      //    arcadeDrive(0, -0.7);
-      //    return false;
-      // } else {
-      //    return true;
-      // }
    }
    
    //DOCUMENT
