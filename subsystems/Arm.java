@@ -139,8 +139,17 @@ public class Arm extends Subsystem {
       }
    }
    
+   //DOCUMENT
    public void turntableTeleOp(double power) {
-      turntable.setPower(power);
+      if (getTurntableAngle() > Constants.MIN_TURNTABLE) {
+         if (getTurntableAngle() < Constants.MAX_TURNTABLE) {
+            turntable.setPower(power);
+         } else {
+            turntable.setPower(-0.3)
+         }
+      } else {
+         turntable.setPower(0.3);
+      }
       isInTeleOp = true;
    }
    
