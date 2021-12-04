@@ -225,7 +225,7 @@ public class Drivetrain extends Subsystem {
       //TODO fuse this and make it more accurate
       //TODO use the other IMU as well
       //TODO correct for placement of hub on robot and center of rotation and all that
-      return imu2.getAngularOrientation(AxesReference.EXTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES).thirdAngle;
+      return -imu2.getAngularOrientation(AxesReference.EXTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES).thirdAngle;
    };
    
    /**

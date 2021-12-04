@@ -8,8 +8,8 @@ import org.firstinspires.ftc.teamcode.commandframework.SequentialCommand;
 import org.firstinspires.ftc.teamcode.subsystems.*;
 import org.firstinspires.ftc.teamcode.commands.*;
 
-@Autonomous(name="Vision Freight Warehouse Any", group="compauto")
-public class VisionFreightWarehouseAuto extends LinearOpMode {
+@Autonomous(name="Vision Freight Warehouse Blue", group="compauto")
+public class VisionFreightWarehouseAutoBlue extends LinearOpMode {
    private Drivetrain drivetrain;
    private Arm arm;
    private Vision vision;
@@ -51,9 +51,9 @@ public class VisionFreightWarehouseAuto extends LinearOpMode {
         new SetLinearSlide(arm, 0.2), // bring the slide back in
         new WaitCommand(300),
         new DriveDistance(drivetrain, 2), // back up TODO use correct distance
-        new TurnHeadingCommand(drivetrain, 80), // turn towards the warehouse TODO use correct angle
+        new TurnHeadingCommand(drivetrain, 90), // turn towards the warehouse TODO use correct angle
         new WaitCommand(1000),
-        new DriveDistance(drivetrain, 30), // drive into the warehouse and parkTODO actually use the right distance*/
+        new DriveDistance(drivetrain, 50), // drive into the warehouse and parkTODO actually use the right distance*/
         new SetTurntableCommand(arm, 0),
         new WaitCommand(1000)
       );

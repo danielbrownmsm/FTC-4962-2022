@@ -33,7 +33,19 @@ public class TurnHeadingCommand extends Command {
    @Override
    public void execute() {
       //drivetrain.turnToHeading(heading);
-      done = drivetrain.simpleTurnToHeading(heading);
+      if (drivetrain.getHeading() < heading) {
+         drivetrain.arcadeDrive(0, 0.6);
+         done = false;
+      } else {
+         drivetrain.arcadeDrive(0, 0);
+         done = true;
+      }
+      //done = drivetrain.simpleTurnToHeading(heading);
+   }
+   
+   @Override
+   public void end(boolean interrupted) {
+      drivetrain.arcadeDrive(0, 0);
    }
    
    @Override

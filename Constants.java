@@ -27,12 +27,12 @@ public class Constants {
    public static final PIDCoefficients linearSlidePID = new PIDCoefficients(0.07, 0.001, 0.3);
 
    public static final double linearSlideDiameter = 3; // diameter of linear slide spool thingy, in inches
-   public static final double armHeight[] = {15, 15, 27, 47}; // in degrees, from -1 to 3
+   public static final double armHeight[] = {15, 15, 32, 52}; // in degrees, from -1 to 3
    
    public static final double MAX_ARM = 90;
    public static final double MIN_ARM = -10;
-   public static final double MAX_TURNTABLE = 20;
-   public static final double MIN_TURNTABLE = -190;
+   public static final double MAX_TURNTABLE = 40;
+   public static final double MIN_TURNTABLE = -210;
    public static final double MAX_LINEAR_SLIDE = 10;
    public static final double MIN_LINEAR_SLIDE = 0;
 

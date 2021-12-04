@@ -47,6 +47,7 @@ public class Arm extends Subsystem {
    private Boolean isExtended; //???
    private Boolean hasFreight = false; //???
    private double intakePower = 0;
+   private Boolean isInTeleOp = false;
    
    /**
     * Creates a new Arm subsystem
@@ -104,6 +105,9 @@ public class Arm extends Subsystem {
       
       intake1.setPower(0);
       intake2.setPower(0);
+      
+      arm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+      
    }
    
    /**
@@ -133,6 +137,11 @@ public class Arm extends Subsystem {
       } else {
          turntable_PID.setSetpoint(newSetpoint);
       }
+   }
+   
+   public void turntableTeleOp(double power) {
+      turntable.setPower(power);
+      isInTeleOp = true;
    }
    
    //DOCUMENT
@@ -272,9 +281,11 @@ public class Arm extends Subsystem {
       //   turntable.setPower(0);
          //turntable.setMotorDisable();
       //} else {
+      if (!isInTeleOp) {
          double turntableOutput = turntable_PID.calculate(getTurntableAngle());
          telemetry.addData("turntable output", turntableOutput);
          turntable.setPower(turntableOutput);
+      }
       //}
 
       //if (arm.getCurrent(CurrentUnit.AMPS) > Constants.ARM_MAX_CURRENT) {

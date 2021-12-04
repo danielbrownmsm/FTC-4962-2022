@@ -10,8 +10,8 @@ import org.firstinspires.ftc.teamcode.subsystems.*;
 import org.firstinspires.ftc.teamcode.commands.*;
 
 
-@TeleOp(name="Competition TeleOp", group="comp")
-public class CommandTeleOp2 extends OpMode {
+@TeleOp(name="Competition TeleOp Arcade", group="comp")
+public class CommandTeleOp2Arcade extends OpMode {
    private CommandScheduler2 scheduler;
    
    private Drivetrain drivetrain;
@@ -36,13 +36,11 @@ public class CommandTeleOp2 extends OpMode {
    private ArmPresetCommand setArmLevel3;
    private ArmPresetCommand setArmLevel1;
    
-   private TurntableTeleOpCommand turntableTeleOp;
-   
    private SetWheelCommand turnWheel;
    private SetWheelCommand stopWheel;
    
    // drivetrain commands
-   private DriveCommand driveTeleOp;
+   private ArcadeDriveCommand driveTeleOp;
    
    // buttons
    private ButtonR xButton2;
@@ -115,15 +113,12 @@ public class CommandTeleOp2 extends OpMode {
       setArmLevel3 = new ArmPresetCommand(arm, 3);
       setArmLevel1 = new ArmPresetCommand(arm, 1);
       
-      turntableTeleOp = new TurntableTeleOpCommand(arm, gamepad2);
-      
       // it's time to get wheel, cause things are getting wheely wheel around here
       turnWheel = new SetWheelCommand(wheel, 1);
       stopWheel = new SetWheelCommand(wheel, 0);
 
-      driveTeleOp = new DriveCommand(drivetrain, gamepad1);
+      driveTeleOp = new ArcadeDriveCommand(drivetrain, gamepad1);
       CommandScheduler2.schedule(driveTeleOp); // schedule our command already
-      CommandScheduler2.schedule(turntableTeleOp);
 
       // bind commands
       dpadLeft2.whileHeld(tableRight);
