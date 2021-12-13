@@ -121,7 +121,11 @@ public class Drivetrain extends Subsystem {
       rightBack.setPower(rightPower);
    }
    
-   //DOCUMENT
+   /**
+    * Drives the robot arcade-style, mainly for autos
+    * @param power the forward/backward power to drive
+    * @param turn the left/right turning power to drive
+    */
    public void arcadeDrive(double power, double turn) {
       leftFront.setPower(power - turn);
       leftBack.setPower(power - turn);
@@ -129,7 +133,10 @@ public class Drivetrain extends Subsystem {
       rightBack.setPower(power + turn);
    }
    
-   //DOCUMENT
+   /**
+    * Prepares us to turn by resetting everything
+    * For use in auto
+    */
    public void prepareTurn() {
       resetGyros();
       turnPID.reset();
@@ -137,7 +144,10 @@ public class Drivetrain extends Subsystem {
       //TODO fix so turns are relative and not absolute
    }
    
-   //DOCUMENT
+   /**
+    * Prepares us to drive by resetting everything
+    * For use in auto
+    */
    public void prepareDistance() {
       resetEncoders();
       resetGyros();
@@ -167,7 +177,11 @@ public class Drivetrain extends Subsystem {
       return false;
    }
    
-   //DOCUMENT
+   /**
+    * Drives us a distance on a straight line (should be gyro-corrected but currently not.
+    * The wheels work pretty well for keeping us straight).
+    * @param distance the distance, in inches, to drive
+    */
    public void driveDistance(double distance) {
       distancePID.setSetpoint(distance);
       double power = distancePID.calculate(getAverageDistance());
@@ -180,17 +194,26 @@ public class Drivetrain extends Subsystem {
       arcadeDrive(power, 0);
    }
    
-   //DOCUMENT
+   /**
+    * Returns if the headingPID is at its setpoint
+    * @return true if the headingPID is at setpoint
+    */
    public boolean atHeadingSetpoint() {
       return headingPID.atSetpoint();
    }
    
-   //DOCUMENT
+   /**
+    * Returns if the distancePID is at its setpoint
+    * @return true if the distancePID is at setpoint
+    */
    public boolean atDistanceSetpoint() {
       return distancePID.atSetpoint();
    }
    
-   //DOCUMENT
+   /**
+    * Returns if the turnPIDPID is at its setpoint
+    * @return true if the turnPIDPID is at setpoint
+    */
    public boolean atTurnSetpoint() {
       return turnPID.atSetpoint();
    }
